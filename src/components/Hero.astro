@@ -1,0 +1,58 @@
+---
+// Dark hero with a docker-compose demo and CTAs. Landing page only.
+import Terminal from './Terminal.astro';
+---
+<section class="hero">
+  <div class="container hero__inner">
+    <div class="hero__copy">
+      <span class="hero__eyebrow">Cloud Independent Data Platform</span>
+      <h1 class="hero__title">Own your data.<br />Run anywhere.</h1>
+      <p class="hero__lede">
+        A sovereign, open-source data platform built on Apache Iceberg, Polaris, SQE,
+        and OPA. Enterprise-grade security, AI-assisted analytics, and total cloud
+        independence — <strong>zero proprietary lock-in.</strong> Deploy on any cloud
+        or on-premises.
+      </p>
+      <div class="hero__cta">
+        <a class="btn btn--primary" href="#quickstart">Run it locally</a>
+        <a class="btn btn--ghost" href="#capabilities">See what it does</a>
+        <a class="btn btn--ghost" href="/about">Why sovereignty ↓</a>
+      </div>
+      <p class="hero__note">
+        Open standards end to end: Apache Iceberg · Polaris · OPA · Keycloak · S3. No vendor IAM, no proprietary format.
+      </p>
+    </div>
+
+    <div class="hero__demo">
+      <Terminal title="quickstart/sqe — docker compose">
+        <span class="t-line t-comment"># Bring up the full platform locally.</span>
+        <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">cd quickstart/sqe && docker compose up -d</span></span>
+        <span class="t-line t-out">✔ polaris  ✔ keycloak  ✔ opa  ✔ sqe  ✔ postgres  ✔ portal</span>
+        <span class="t-line"> </span>
+        <span class="t-line t-comment"># Query Iceberg through SQE (Arrow Flight SQL), as the logged-in user.</span>
+        <span class="t-line"><span class="t-prompt">sql&gt;</span> <span class="t-kw">SELECT</span> region, <span class="t-fn">sum</span>(revenue)</span>
+        <span class="t-line">  <span class="t-out">...&gt;</span> <span class="t-kw">FROM</span> analytics.sales.orders <span class="t-kw">GROUP BY</span> region;</span>
+        <span class="t-line"> </span>
+        <span class="t-line t-out">+-----------+-------------+</span>
+        <span class="t-line t-out">| region    | sum(revenue)|</span>
+        <span class="t-line t-out">+-----------+-------------+</span>
+        <span class="t-line t-out">| emea      | 1840255.00  |</span>
+        <span class="t-line t-out">+-----------+-------------+</span>
+        <span class="t-line t-out">open https://platform.example</span>
+      </Terminal>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero { background: var(--space-gray); color: #fff; padding-block: clamp(48px, 7vw, 96px);
+    background-image: radial-gradient(900px 400px at 78% -10%, rgba(30, 232, 237, 0.1), transparent 60%), radial-gradient(700px 380px at 10% 110%, rgba(30, 128, 237, 0.16), transparent 60%); }
+  .hero__inner { display: grid; grid-template-columns: 1fr 1fr; gap: 52px; align-items: center; }
+  .hero__eyebrow { font-family: var(--font-mono); color: var(--turquoise); font-size: 0.82rem; letter-spacing: 0.1em; font-weight: 600; }
+  .hero__title { margin: 14px 0 20px; font-size: clamp(2.6rem, 5.2vw, 4rem); font-weight: 900; letter-spacing: -0.03em; color: #fff; }
+  .hero__lede { font-size: 1.12rem; color: rgba(255, 255, 255, 0.8); max-width: 46ch; }
+  .hero__lede strong { color: #fff; }
+  .hero__cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
+  .hero__note { margin-top: 22px; font-size: 0.86rem; color: rgba(255, 255, 255, 0.55); }
+  @media (max-width: 900px) { .hero__inner { grid-template-columns: 1fr; gap: 36px; } }
+</style>

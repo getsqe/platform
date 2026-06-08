@@ -1,0 +1,42 @@
+---
+// Generic feature card grid. Each item: { title, body }.
+interface Item {
+  title: string;
+  body: string;
+}
+interface Props {
+  items: Item[];
+  columns?: number;
+}
+const { items, columns = 4 } = Astro.props;
+---
+<div class="fgrid" style={`--cols:${columns}`}>
+  {items.map((it) => (
+    <article class="fgrid__card card">
+      <h3 class="section-marker">{it.title}</h3>
+      <p set:html={it.body} />
+    </article>
+  ))}
+</div>
+
+<style>
+  .fgrid {
+    display: grid;
+    grid-template-columns: repeat(var(--cols), 1fr);
+    gap: 18px;
+  }
+  .fgrid__card { transition: border-color 0.15s ease, transform 0.08s ease; }
+  .fgrid__card:hover { border-color: var(--sqe-blue); transform: translateY(-2px); }
+  .fgrid__card h3 { font-size: 1.05rem; margin-bottom: 10px; }
+  .fgrid__card p { font-size: 0.94rem; color: var(--text-muted); margin: 0; }
+  .fgrid__card :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    background: var(--soft-blue);
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+    color: var(--midnight);
+  }
+  @media (max-width: 980px) { .fgrid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .fgrid { grid-template-columns: 1fr; } }
+</style>

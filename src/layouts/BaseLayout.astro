@@ -1,0 +1,55 @@
+---
+import '@fontsource-variable/inter';
+import '@fontsource/jetbrains-mono/400.css';
+import '@fontsource/jetbrains-mono/600.css';
+import '@fontsource/jetbrains-mono/800.css';
+import '../styles/theme.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Render the dark space-gray band behind the nav + hero (landing only). */
+  darkHeader?: boolean;
+}
+const {
+  title,
+  description = 'Cloud Independent Data Platform — a sovereign, open-source data platform: Iceberg catalog, SQE/Trino SQL, Keycloak + OPA security, AI-assisted analytics. Own your data. Run anywhere. Zero lock-in.',
+  darkHeader = false,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://platform.getsqe.com').href;
+const ogImage = new URL('/og-image.svg', Astro.site ?? 'https://platform.getsqe.com').href;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta name="theme-color" content="#082646" />
+  </head>
+  <body class:list={[darkHeader && 'has-dark-header']}>
+    <Nav />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style is:global>
+  main { display: block; }
+</style>

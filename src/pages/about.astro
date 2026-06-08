@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+---
+<BaseLayout title="About — Cloud Independent Data Platform">
+  <section class="section">
+    <div class="container narrow">
+      <SectionHeading eyebrow="About" title="Sovereignty is an architecture, not a checkbox." />
+      <p>The Cloud Independent Data Platform exists because most "data sovereignty" is a setting in someone else's console. Real sovereignty means you can pick up your data and your access policies and walk to a different cloud — or to your own datacenter — without a multi-year migration.</p>
+      <p>So every layer is a widely adopted open standard governed by a neutral body: Apache Iceberg and Polaris for tables and catalog, ANSI SQL via SQE or Trino for query, OpenID Connect for identity, OPA/Rego for authorization, the S3 API for storage, Kubernetes + Helm for deployment. No single vendor controls any component of the stack.</p>
+      <p>That makes regulations like GDPR, DORA, and NIS2 tractable: data location is your choice, access decisions are policy-as-code you can audit, and there is no proprietary format holding you hostage.</p>
+
+      <h2 class="section-marker">Built by Schuberg Philis</h2>
+      <p>The platform is designed and built by <a href="https://schubergphilis.com" rel="noopener">Schuberg Philis</a>, integrating proven open-source components — Polaris, Keycloak, OPA, Trino, the Sovereign Query Engine — into one secure, operable whole. It pairs with <a href="https://getsqe.com">SQE</a>, the sovereign query engine that powers the platform's <code>sqe</code> deployment mode.</p>
+      <p class="ph-note">Beta: this site tells the story; product screenshots, a hosted demo, and public images are on the way.</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .narrow { max-width: 74ch; }
+  .narrow h2 { margin-top: 40px; font-size: 1.4rem; }
+  .ph-note { margin-top: 28px; font-size: 0.88rem; color: var(--text-muted); font-style: italic; }
+</style>

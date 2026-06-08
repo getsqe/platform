@@ -1,0 +1,12 @@
+---
+// Signature motif: short 56x4 bar under headings. Yellow variant for emphasis.
+interface Props {
+  yellow?: boolean;
+  center?: boolean;
+}
+const { yellow = false, center = false } = Astro.props;
+const cls = ['marker-bar', yellow && 'marker-bar--yellow', center && 'marker-bar--center']
+  .filter(Boolean)
+  .join(' ');
+---
+<span class={cls} aria-hidden="true"></span>

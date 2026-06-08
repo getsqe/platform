@@ -1,0 +1,52 @@
+---
+// Footer. SBP stays out of the chrome (credited in /about content only).
+const year = new Date().getFullYear();
+---
+<footer class="footer">
+  <div class="container footer__inner">
+    <div class="footer__brand">
+      <span class="footer__logo">Cloud Independent Data Platform</span>
+      <p class="footer__tag">Own your data. Run anywhere. Zero lock-in.</p>
+    </div>
+    <nav class="footer__cols" aria-label="Footer">
+      <div>
+        <h4>Platform</h4>
+        <a href="/#capabilities">Capabilities</a>
+        <a href="/#engine">Query engine</a>
+        <a href="/#security">Security</a>
+        <a href="/#compare">vs Cloud DW</a>
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <a href="/#quickstart">Run it locally</a>
+        <a href="/roadmap">Roadmap</a>
+        <a href="/about">About</a>
+      </div>
+      <div>
+        <h4>Built on open standards</h4>
+        <a href="https://iceberg.apache.org/" target="_blank" rel="noopener noreferrer">Apache Iceberg ↗</a>
+        <a href="https://polaris.apache.org/" target="_blank" rel="noopener noreferrer">Apache Polaris ↗</a>
+        <a href="https://www.openpolicyagent.org/" target="_blank" rel="noopener noreferrer">Open Policy Agent ↗</a>
+        <a href="https://www.keycloak.org/" target="_blank" rel="noopener noreferrer">Keycloak ↗</a>
+      </div>
+    </nav>
+  </div>
+  <div class="container footer__bottom">
+    <span>© {year} Cloud Independent Data Platform · Beta</span>
+    <span class="footer__mono">Own your data. Run anywhere.</span>
+  </div>
+</footer>
+
+<style>
+  .footer { background: var(--midnight); color: rgba(255, 255, 255, 0.7); padding-top: 56px; }
+  .footer__inner { display: grid; grid-template-columns: 1.4fr 2fr; gap: 40px; padding-bottom: 40px; }
+  .footer__logo { font-weight: 900; font-size: 1.25rem; color: #fff; letter-spacing: -0.02em; }
+  .footer__tag { margin-top: 8px; font-size: 0.92rem; max-width: 32ch; }
+  .footer__cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  .footer__cols h4 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--turquoise); font-family: var(--font-mono); margin-bottom: 12px; }
+  .footer__cols a { display: block; color: rgba(255, 255, 255, 0.75); font-size: 0.92rem; margin-bottom: 8px; }
+  .footer__cols a:hover { color: #fff; }
+  .footer__bottom { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-block: 22px; font-size: 0.82rem; color: rgba(255, 255, 255, 0.5); }
+  .footer__mono { font-family: var(--font-mono); }
+  @media (max-width: 720px) { .footer__inner { grid-template-columns: 1fr; gap: 28px; } .footer__bottom { flex-direction: column; gap: 8px; text-align: center; } }
+</style>

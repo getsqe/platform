@@ -1,0 +1,41 @@
+---
+// Top nav. Dark on the hero, sits on the space-gray header band.
+const links = [
+  { href: '/#capabilities', label: 'Capabilities' },
+  { href: '/#security', label: 'Security' },
+  { href: '/#quickstart', label: 'Quickstart' },
+  { href: '/roadmap', label: 'Roadmap' },
+  { href: '/about', label: 'About' },
+];
+const path = Astro.url.pathname;
+---
+<header class="nav">
+  <div class="container nav__inner">
+    <a href="/" class="nav__brand" aria-label="Cloud Independent Data Platform home">
+      <span class="nav__logo">Data&nbsp;Platform</span>
+      <span class="nav__sub">Cloud Independent</span>
+    </a>
+    <nav class="nav__links" aria-label="Primary">
+      {links.map((l) => (
+        <a href={l.href} class:list={['nav__link', !l.href.includes('#') && path === l.href && 'is-active']}>{l.label}</a>
+      ))}
+      <a href="/#quickstart" class="nav__gh">Run it locally →</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .nav { background: var(--space-gray); border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+  .nav__inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 64px; }
+  .nav__brand { display: flex; align-items: baseline; gap: 10px; color: #fff; }
+  .nav__brand:hover { text-decoration: none; }
+  .nav__logo { font-weight: 900; font-size: 1.3rem; letter-spacing: -0.03em; color: #fff; }
+  .nav__sub { font-family: var(--font-mono); font-size: 0.72rem; color: var(--turquoise); letter-spacing: 0.04em; }
+  .nav__links { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+  .nav__link { color: rgba(255, 255, 255, 0.82); font-size: 0.92rem; font-weight: 600; }
+  .nav__link:hover, .nav__link.is-active { color: #fff; text-decoration: none; }
+  .nav__link.is-active { color: var(--turquoise); }
+  .nav__gh { color: #fff; font-weight: 700; font-size: 0.92rem; border: 1px solid rgba(255, 255, 255, 0.25); padding: 6px 14px; border-radius: 7px; }
+  .nav__gh:hover { border-color: rgba(255, 255, 255, 0.6); text-decoration: none; }
+  @media (max-width: 720px) { .nav__sub { display: none; } .nav__links { gap: 14px; } }
+</style>

@@ -1,0 +1,23 @@
+---
+// Eyebrow + marker bar + title block used at the top of content sections.
+import MonoEyebrow from './MonoEyebrow.astro';
+import MarkerBar from './MarkerBar.astro';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  yellow?: boolean;
+  center?: boolean;
+}
+const { eyebrow, title, yellow = false, center = false } = Astro.props;
+---
+<div class:list={['section-heading', center && 'section-heading--center']}>
+  {eyebrow && <MonoEyebrow text={eyebrow} />}
+  <MarkerBar yellow={yellow} center={center} />
+  <h2>{title}</h2>
+</div>
+
+<style>
+  .section-heading { margin-bottom: 36px; }
+  .section-heading--center { text-align: center; }
+</style>

@@ -1,0 +1,67 @@
+---
+// Styled terminal block for the dark hero. Pass a title and slot the lines.
+// Lines use spans with classes: .t-prompt, .t-cmd, .t-comment, .t-kw, .t-str, .t-out
+interface Props {
+  title?: string;
+}
+const { title = 'sqe-cli — embedded' } = Astro.props;
+---
+<div class="term" role="img" aria-label="SQE CLI session example">
+  <div class="term__bar">
+    <span class="term__dot term__dot--r"></span>
+    <span class="term__dot term__dot--y"></span>
+    <span class="term__dot term__dot--g"></span>
+    <span class="term__title">{title}</span>
+  </div>
+  <div class="term__body"><slot /></div>
+</div>
+
+<style>
+  .term {
+    background: var(--midnight);
+    border: 1px solid rgba(30, 232, 237, 0.18);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 24px 60px -28px rgba(2, 12, 23, 0.9);
+  }
+  .term__bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  }
+  .term__dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+  .term__dot--r { background: #ff5f57; }
+  .term__dot--y { background: #febc2e; }
+  .term__dot--g { background: #28c840; }
+  .term__title {
+    margin-left: 10px;
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    color: rgba(255, 255, 255, 0.45);
+  }
+  .term__body {
+    margin: 0;
+    padding: 20px 22px;
+    font-family: var(--font-mono);
+    font-size: 0.84rem;
+    line-height: 1.7;
+    color: #cdd9e5;
+    overflow-x: auto;
+    /* container collapses source newlines; each .t-line preserves its own spacing */
+    white-space: normal;
+    tab-size: 2;
+  }
+  /* Each terminal line is its own block so layout never depends on source
+     whitespace between elements (which Astro collapses). */
+  :global(.term__body .t-line) { display: block; white-space: pre; }
+  :global(.term__body .t-comment) { color: #6b7a90; font-style: italic; }
+  :global(.term__body .t-prompt) { color: var(--turquoise); }
+  :global(.term__body .t-cmd) { color: #fff; }
+  :global(.term__body .t-kw) { color: #ffdb4e; }
+  :global(.term__body .t-str) { color: #7ee787; }
+  :global(.term__body .t-fn) { color: #79c0ff; }
+  :global(.term__body .t-out) { color: #8b98a8; }
+</style>

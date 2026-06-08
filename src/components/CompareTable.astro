@@ -1,0 +1,48 @@
+---
+// Reusable comparison table. `head` = column headers (first is the row label
+// column). `rows` = [{ label, cells: [{ t, tone? }] }]. tone colors the cell.
+type Tone = 'yes' | 'no' | 'emph' | undefined;
+interface RowCell {
+  t: string;
+  tone?: Tone;
+}
+interface Row {
+  label: string;
+  cells: RowCell[];
+}
+interface Props {
+  head: string[];
+  rows: Row[];
+}
+const { head, rows } = Astro.props;
+const toneClass: Record<string, string> = { yes: 'cell-yes', no: 'cell-no', emph: 'cell-emph' };
+---
+<div class="tbl-wrap">
+  <table class="tbl">
+    <thead>
+      <tr>{head.map((h, i) => <th class={i === 0 ? '' : 'col-center'}>{h}</th>)}</tr>
+    </thead>
+    <tbody>
+      {rows.map((r) => (
+        <tr>
+          <td class="row-label">{r.label}</td>
+          {r.cells.map((c) => (
+            <td class:list={['col-center', c.tone && toneClass[c.tone]]} set:html={c.t} />
+          ))}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .row-label { font-weight: 600; }
+  .col-center { text-align: center; }
+  table.tbl :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    background: var(--soft-blue);
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+  }
+</style>

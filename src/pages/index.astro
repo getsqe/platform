@@ -22,7 +22,7 @@ const stackHead = ['Capability', 'Technology', 'Lock-in risk'];
 const stackRows = [
   { label: 'Data format', cells: [{ t: 'Apache Iceberg' }, { t: 'none — open table format', tone: 'yes' }] },
   { label: 'Data catalog', cells: [{ t: 'Apache Polaris' }, { t: 'none — open REST catalog', tone: 'yes' }] },
-  { label: 'Query engine', cells: [{ t: 'SQE (Flight SQL), Trino-compatible', tone: 'emph' }, { t: 'none — ANSI SQL, JDBC/ODBC', tone: 'yes' }] },
+  { label: 'Query engine', cells: [{ t: 'SQE (Flight SQL) · Trino · Spark Connect', tone: 'emph' }, { t: 'none — ANSI SQL, JDBC/ODBC', tone: 'yes' }] },
   { label: 'Identity', cells: [{ t: 'Keycloak / OpenID Connect' }, { t: 'none — any OIDC provider', tone: 'yes' }] },
   { label: 'Authorization', cells: [{ t: 'OPA + Rego policies' }, { t: 'none — open policy standard', tone: 'yes' }] },
   { label: 'Storage', cells: [{ t: 'Any S3-compatible backend' }, { t: 'none — standard S3 API', tone: 'yes' }] },
@@ -83,22 +83,22 @@ const cmpRows = [
       <FeatureGrid items={features} columns={4} />
       <div class="shots">
         <figure class="shotcard">
-          <img src="/screenshots/admin-overview.png" width="2880" height="1800" loading="lazy" decoding="async"
+          <img src="/screenshots/admin-overview.png" width="2880" height="1800" loading="lazy" decoding="async" data-zoom
                alt="Admin overview — catalogs, namespaces, tables, principals, and roles" />
           <figcaption>Admin overview — catalogs, principals, and roles at a glance.</figcaption>
         </figure>
         <figure class="shotcard">
-          <img src="/screenshots/data-contracts.png" width="2880" height="1800" loading="lazy" decoding="async"
+          <img src="/screenshots/data-contracts.png" width="2880" height="1800" loading="lazy" decoding="async" data-zoom
                alt="Data Contracts — ODCS contracts across catalogs with quality status" />
           <figcaption>Data contracts — ODCS, versioned, with quality status per table.</figcaption>
         </figure>
         <figure class="shotcard">
-          <img src="/screenshots/dbt-projects.png" width="2880" height="1800" loading="lazy" decoding="async"
+          <img src="/screenshots/dbt-projects.png" width="2880" height="1800" loading="lazy" decoding="async" data-zoom
                alt="dbt projects — connect a git repo and build" />
           <figcaption>dbt workspace — bring a git repo, build and test in the browser.</figcaption>
         </figure>
         <figure class="shotcard">
-          <img src="/screenshots/workspaces.png" width="2880" height="1800" loading="lazy" decoding="async"
+          <img src="/screenshots/workspaces.png" width="2880" height="1800" loading="lazy" decoding="async" data-zoom
                alt="Workspace picker — per-team workspaces on one platform" />
           <figcaption>Per-team workspaces, one governed platform.</figcaption>
         </figure>

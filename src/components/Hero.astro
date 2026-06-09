@@ -1,6 +1,6 @@
 ---
-// Dark hero with a docker-compose demo and CTAs. Landing page only.
-import Terminal from './Terminal.astro';
+// Dark hero with CTAs. Landing page only. Product screenshot lands in the
+// right-hand panel later — placeholder for now.
 ---
 <section class="hero">
   <div class="container hero__inner">
@@ -10,12 +10,12 @@ import Terminal from './Terminal.astro';
       <p class="hero__lede">
         A sovereign, open-source data platform built on Apache Iceberg, Polaris, SQE,
         and OPA. Enterprise-grade security, AI-assisted analytics, and total cloud
-        independence — <strong>zero proprietary lock-in.</strong> Deploy on any cloud
-        or on-premises.
+        independence — <strong>zero proprietary lock-in.</strong> Runs on Kubernetes:
+        hyperscaler, sovereign cloud, private cloud, or on-prem.
       </p>
       <div class="hero__cta">
-        <a class="btn btn--primary" href="#quickstart">Run it locally</a>
-        <a class="btn btn--ghost" href="#capabilities">See what it does</a>
+        <a class="btn btn--primary" href="#capabilities">See what it does</a>
+        <a class="btn btn--ghost" href="#deploy">Deploy anywhere</a>
         <a class="btn btn--ghost" href="/about">Why sovereignty ↓</a>
       </div>
       <p class="hero__note">
@@ -24,22 +24,12 @@ import Terminal from './Terminal.astro';
     </div>
 
     <div class="hero__demo">
-      <Terminal title="quickstart/sqe — docker compose">
-        <span class="t-line t-comment"># Bring up the full platform locally.</span>
-        <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">cd quickstart/sqe && docker compose up -d</span></span>
-        <span class="t-line t-out">✔ polaris  ✔ keycloak  ✔ opa  ✔ sqe  ✔ postgres  ✔ portal</span>
-        <span class="t-line"> </span>
-        <span class="t-line t-comment"># Query Iceberg through SQE (Arrow Flight SQL), as the logged-in user.</span>
-        <span class="t-line"><span class="t-prompt">sql&gt;</span> <span class="t-kw">SELECT</span> region, <span class="t-fn">sum</span>(revenue)</span>
-        <span class="t-line">  <span class="t-out">...&gt;</span> <span class="t-kw">FROM</span> analytics.sales.orders <span class="t-kw">GROUP BY</span> region;</span>
-        <span class="t-line"> </span>
-        <span class="t-line t-out">+-----------+-------------+</span>
-        <span class="t-line t-out">| region    | sum(revenue)|</span>
-        <span class="t-line t-out">+-----------+-------------+</span>
-        <span class="t-line t-out">| emea      | 1840255.00  |</span>
-        <span class="t-line t-out">+-----------+-------------+</span>
-        <span class="t-line t-out">open https://platform.example</span>
-      </Terminal>
+      <div class="shot">
+        <div class="shot__bar"><span></span><span></span><span></span></div>
+        <img class="shot__img" src="/screenshots/workspace-home.png" width="2880" height="1800"
+             loading="eager" decoding="async"
+             alt="Cloud Independent Data Platform — workspace home: Discover, Build, Govern, Admin" />
+      </div>
     </div>
   </div>
 </section>
@@ -54,5 +44,12 @@ import Terminal from './Terminal.astro';
   .hero__lede strong { color: #fff; }
   .hero__cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
   .hero__note { margin-top: 22px; font-size: 0.86rem; color: rgba(255, 255, 255, 0.55); }
+
+  /* Windowed product screenshot. */
+  .shot { border: 1px solid rgba(30, 232, 237, 0.22); border-radius: var(--radius); overflow: hidden;
+    background: rgba(2, 12, 23, 0.9); box-shadow: 0 20px 60px rgba(0,0,0,0.35); }
+  .shot__bar { display: flex; gap: 7px; padding: 12px 14px; background: rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .shot__bar span { width: 11px; height: 11px; border-radius: 50%; background: rgba(255,255,255,0.18); }
+  .shot__img { display: block; width: 100%; height: auto; }
   @media (max-width: 900px) { .hero__inner { grid-template-columns: 1fr; gap: 36px; } }
 </style>

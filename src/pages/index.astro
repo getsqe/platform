@@ -81,8 +81,29 @@ const cmpRows = [
     <div class="container">
       <SectionHeading eyebrow="What it does" title="Catalog, query, dbt, AI, and governance — in one place." />
       <FeatureGrid items={features} columns={4} />
-      <!-- TODO(screenshots): add product screenshots / short video here once captured. -->
-      <p class="ph-note">Screenshots and a short product tour land here in a later beta drop.</p>
+      <div class="shots">
+        <figure class="shotcard">
+          <img src="/screenshots/admin-overview.png" width="2880" height="1800" loading="lazy" decoding="async"
+               alt="Admin overview — catalogs, namespaces, tables, principals, and roles" />
+          <figcaption>Admin overview — catalogs, principals, and roles at a glance.</figcaption>
+        </figure>
+        <figure class="shotcard">
+          <img src="/screenshots/data-contracts.png" width="2880" height="1800" loading="lazy" decoding="async"
+               alt="Data Contracts — ODCS contracts across catalogs with quality status" />
+          <figcaption>Data contracts — ODCS, versioned, with quality status per table.</figcaption>
+        </figure>
+        <figure class="shotcard">
+          <img src="/screenshots/dbt-projects.png" width="2880" height="1800" loading="lazy" decoding="async"
+               alt="dbt projects — connect a git repo and build" />
+          <figcaption>dbt workspace — bring a git repo, build and test in the browser.</figcaption>
+        </figure>
+        <figure class="shotcard">
+          <img src="/screenshots/workspaces.png" width="2880" height="1800" loading="lazy" decoding="async"
+               alt="Workspace picker — per-team workspaces on one platform" />
+          <figcaption>Per-team workspaces, one governed platform.</figcaption>
+        </figure>
+      </div>
+      <p class="ph-note">Flagship views — query editor, catalog explorer, and lineage — join the gallery in a later beta drop.</p>
     </div>
   </section>
 
@@ -93,15 +114,15 @@ const cmpRows = [
       <div class="how-grid">
         <div>
           <h3 class="section-marker">SQE — sovereign, fast, no JVM</h3>
-          <p>The <code>sqe</code> deployment mode runs the <a href="https://getsqe.com">Sovereign Query Engine</a> in place of Trino: Arrow Flight SQL on the wire, native Iceberg V2/V3 read+write, per-query identity. Every query runs as the authenticated user — the bearer token flows through to the catalog and storage.</p>
+          <p>The <code>sqe</code> deployment mode runs the <a href="https://getsqe.com">Sovereign Query Engine</a> in place of Trino: Arrow Flight SQL on the wire, per-query identity, and <a href="https://getsqe.com/compare/iceberg/">highly Iceberg-compatible</a> reads and writes — V2 <em>and</em> V3. Every query runs as the authenticated user; the bearer token flows through to the catalog and storage.</p>
         </div>
         <div>
-          <h3 class="section-marker">Trino-compatible — bring your tools</h3>
-          <p>SQE speaks the Trino HTTP protocol too, so existing clients connect unchanged. Prefer Trino itself? Swap it in. Either way it's ANSI SQL over standard JDBC/ODBC — no proprietary drivers.</p>
+          <h3 class="section-marker">Trino-compatible, Spark for engineering</h3>
+          <p>SQE speaks the Trino HTTP protocol too, so existing clients connect unchanged — or swap in Trino itself. For heavy data engineering, <strong>Spark Connect</strong> runs against the same Iceberg tables, no copies. Either way it's ANSI SQL over standard JDBC/ODBC — no proprietary drivers.</p>
         </div>
       </div>
       <h3 class="proof-sub section-marker">Connect anything that speaks SQL</h3>
-      <p class="lead">Tableau · Power BI · DBeaver · DataGrip · dbt · Python/pandas · the built-in Query Editor — all via Flight SQL or standard JDBC/ODBC. No data copying; queries run against data in place.</p>
+      <p class="lead">Tableau · Power BI · DBeaver · DataGrip · dbt · Python/pandas · Spark Connect · the built-in Query Editor — all via Flight SQL or standard JDBC/ODBC. No data copying; queries run against data in place.</p>
     </div>
   </section>
 
@@ -119,40 +140,31 @@ const cmpRows = [
           <p>One policy engine for the whole platform. Catalog-level (catalogs, namespaces, tables), query-level (execution, visibility, row filtering). Policy-as-code: version, review, and audit every access rule. Roles from service_admin to table_reader.</p>
         </div>
       </div>
+      <h3 class="proof-sub section-marker">Catalog grants — on top of Apache Polaris</h3>
+      <p class="lead"><code>GRANT</code> and <code>REVOKE</code> privileges on catalogs, namespaces, and tables using Polaris's native RBAC security model — then layer OPA policies on top for row- and column-level rules. Standard, portable grants; no vendor-specific access model to migrate away from.</p>
     </div>
   </section>
 
-  <!-- QUICKSTART -->
-  <section class="section how" id="quickstart">
+  <!-- DEPLOY -->
+  <section class="section how" id="deploy">
     <div class="container">
-      <SectionHeading eyebrow="Run it locally" title="Three deployment modes, one command each." />
+      <SectionHeading eyebrow="Deploy anywhere" title="Kubernetes-native. Your cloud, sovereign cloud, or on-prem." />
       <div class="how-grid">
         <div>
-          <h3 class="section-marker">SQE mode — sovereign engine + AI</h3>
-          <pre class="code"><code>{`# 1. Generate TLS certs + hosts (run once)
-./quickstart/scripts/setup.sh
-
-# 2. Configure
-cd quickstart/sqe
-cp .env.example .env        # edit passwords
-
-# 3. Start the platform
-docker compose up -d
-
-# 4. Open the portal
-open https://platform.example`}</code></pre>
+          <h3 class="section-marker">Runs where your data must live</h3>
+          <ul class="modes">
+            <li><strong>Hyperscalers</strong> — AWS, Azure, GCP.</li>
+            <li><strong>Sovereign clouds</strong> — STACKIT and other EU sovereign providers.</li>
+            <li><strong>Private cloud / on-prem</strong> — your datacenter, your hardware.</li>
+          </ul>
+          <p class="how-foot">The same open stack everywhere — no managed-service lock-in, no per-query fees.</p>
         </div>
         <div>
-          <h3 class="section-marker">Pick your footprint</h3>
-          <ul class="modes">
-            <li><strong>Minimal</strong> — core platform, 8 services, fastest startup.</li>
-            <li><strong>Full</strong> — everything + Jaeger, Ollama, Spark.</li>
-            <li><strong>SQE</strong> — Sovereign Query Engine replaces Trino + cloud AI.</li>
-          </ul>
-          <p class="how-foot">All three run locally on Docker Compose. Production deploys via Kubernetes + Helm with GitOps.</p>
+          <h3 class="section-marker">Kubernetes + Helm, GitOps-ready</h3>
+          <p>Production deploys via Helm charts on any conformant Kubernetes: Polaris, the query engine (SQE or Trino), Spark Connect, Keycloak, OPA, and the portals — with horizontal scaling and Argo CD GitOps delivery. Storage is any S3-compatible backend.</p>
         </div>
       </div>
-      <p class="ph-note">Beta: the quickstart is shipped with the platform. Public images and a hosted demo are coming — until then these commands show how it runs.</p>
+      <p class="ph-note">Beta: public Helm charts and a hosted demo are on the way.</p>
     </div>
   </section>
 
@@ -162,7 +174,7 @@ open https://platform.example`}</code></pre>
       <SectionHeading eyebrow="The receipts" title="Cloud Independent Data Platform vs typical cloud DW." />
       <CompareTable head={cmpHead} rows={cmpRows} />
       <div class="proof-cta">
-        <a class="btn btn--primary" href="#quickstart">Run it locally</a>
+        <a class="btn btn--primary" href="#deploy">Deploy anywhere</a>
         <a class="btn btn--ghost-dark" href="/roadmap">See the roadmap →</a>
         <a class="btn btn--ghost-dark" href="/about">Why we built it</a>
       </div>
@@ -186,6 +198,12 @@ open https://platform.example`}</code></pre>
   .modes strong { color: var(--text); }
   .how-foot { color: var(--text-muted); font-size: 0.92rem; }
   .ph-note { margin-top: 22px; font-size: 0.88rem; color: var(--text-muted); font-style: italic; }
+  .shots { margin-top: 32px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+  .shotcard { margin: 0; }
+  .shotcard img { display: block; width: 100%; height: auto; border: 1px solid var(--border);
+    border-radius: var(--radius-sm); box-shadow: 0 10px 30px rgba(2, 12, 23, 0.12); }
+  .shotcard figcaption { margin-top: 10px; font-size: 0.88rem; color: var(--text-muted); }
+  @media (max-width: 700px) { .shots { grid-template-columns: 1fr; } }
   .proof { background: #fff; border-top: 1px solid var(--border); }
   .proof-sub { margin-top: 44px; font-size: 1.2rem; }
   .proof-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 32px; }

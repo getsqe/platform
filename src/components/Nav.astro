@@ -3,7 +3,7 @@
 const links = [
   { href: '/#capabilities', label: 'Capabilities' },
   { href: '/#security', label: 'Security' },
-  { href: '/#quickstart', label: 'Quickstart' },
+  { href: '/#deploy', label: 'Deployment' },
   { href: '/roadmap', label: 'Roadmap' },
   { href: '/about', label: 'About' },
 ];
@@ -19,7 +19,7 @@ const path = Astro.url.pathname;
       {links.map((l) => (
         <a href={l.href} class:list={['nav__link', !l.href.includes('#') && path === l.href && 'is-active']}>{l.label}</a>
       ))}
-      <a href="/#quickstart" class="nav__gh">Run it locally →</a>
+      <a href="/#deploy" class="nav__gh">Deploy anywhere →</a>
     </nav>
   </div>
 </header>

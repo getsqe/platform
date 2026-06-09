@@ -92,9 +92,7 @@ const ownMore = [
 
         <fieldset class="quote__set">
           <legend>How much data?</legend>
-          <label class="opt"><input type="radio" name="data" value="< 1 TB" /> &lt; 1 TB</label>
-          <label class="opt"><input type="radio" name="data" value="1–10 TB" checked /> 1–10 TB</label>
-          <label class="opt"><input type="radio" name="data" value="10–100 TB" /> 10–100 TB</label>
+          <label class="opt"><input type="radio" name="data" value="10–100 TB" checked /> 10–100 TB</label>
           <label class="opt"><input type="radio" name="data" value="100 TB – 1 PB" /> 100 TB – 1 PB</label>
           <label class="opt"><input type="radio" name="data" value="> 1 PB" /> &gt; 1 PB</label>
         </fieldset>
@@ -108,8 +106,8 @@ const ownMore = [
           <label class="opt"><input type="radio" name="workloads" value="Mixed" /> Mixed</label>
         </fieldset>
 
-        <label class="quote__field">Work email <span>(optional — so we can reply)</span>
-          <input type="email" name="email" placeholder="you@company.com" />
+        <label class="quote__field">Work email <span>(required)</span>
+          <input type="email" name="email" placeholder="you@company.com" required />
         </label>
         <label class="quote__field">Anything else? <span>(optional)</span>
           <textarea name="notes" rows="3" placeholder="Context, timeline, compliance needs…"></textarea>

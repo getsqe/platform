@@ -172,8 +172,8 @@ const roadmap = [
     </div>
   </section>
 
-  <!-- DEPLOY -->
-  <section class="section how" id="deploy">
+  <!-- DEPLOY — dark interlude -->
+  <section class="section section--dark" id="deploy">
     <div class="container">
       <SectionHeading eyebrow="Deploy anywhere" title="Kubernetes-native. Your cloud, sovereign cloud, or on-prem." />
       <div class="how-grid">
@@ -224,7 +224,7 @@ const roadmap = [
       </div>
 
       <div class="plans">
-        <article class="plan">
+        <article class="plan plan--featured">
           <span class="plan__tag">SaaS · fully managed</span>
           <h3 class="plan__title">Sovereign SaaS</h3>
           <p class="plan__where">Runs on <strong>Schuberg Philis Cloud</strong>, <strong>STACKIT</strong> (sovereign EU), or <strong>AWS Sovereign Cloud</strong>.</p>
@@ -382,7 +382,10 @@ const roadmap = [
   .shots { margin-top: 32px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
   .shotcard { margin: 0; }
   .shotcard img { display: block; width: 100%; height: auto; border: 1px solid var(--border);
-    border-radius: var(--radius-sm); box-shadow: 0 10px 30px rgba(2, 12, 23, 0.12); }
+    border-radius: var(--radius-sm); box-shadow: 0 10px 30px rgba(2, 12, 23, 0.12);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; }
+  .shotcard img:hover { transform: translateY(-4px) scale(1.012); border-color: rgba(30, 128, 237, 0.5);
+    box-shadow: 0 18px 44px rgba(8, 38, 70, 0.18); }
   .shotcard figcaption { margin-top: 10px; font-size: 0.88rem; color: var(--text-muted); }
   .proof { background: #fff; border-top: 1px solid var(--border); }
   .proof-sub { margin-top: 44px; font-size: 1.2rem; }
@@ -399,7 +402,16 @@ const roadmap = [
   .managed__txt { font-size: 0.96rem; color: var(--text); }
   .plans { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
   .plan { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 26px 24px; display: flex; flex-direction: column; }
+    padding: 26px 24px; display: flex; flex-direction: column;
+    transition: transform 0.18s ease, box-shadow 0.18s ease; }
+  .plan:hover { transform: translateY(-3px); box-shadow: 0 14px 34px rgba(8, 38, 70, 0.10); }
+  /* Featured: SBP Blue edge + lift — visual emphasis only. */
+  .plan--featured { border: 2px solid var(--sqe-blue); box-shadow: 0 12px 36px rgba(30, 128, 237, 0.14); }
+  /* Dark interlude readability for notes inside #deploy. */
+  .section--dark .ph-note { color: rgba(255, 255, 255, 0.6); }
+  .section--dark .how-foot { color: rgba(255, 255, 255, 0.72); }
+  .section--dark .modes { color: rgba(255, 255, 255, 0.78); }
+  .section--dark .modes strong { color: #fff; }
   /* Label: pill with one straight corner, sentence case (brandbook). */
   .plan__tag { display: inline-block; align-self: flex-start; font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0;
     color: var(--space-gray); background: var(--soft-blue); padding: 4px 12px; border-radius: 999px 999px 999px 4px; }

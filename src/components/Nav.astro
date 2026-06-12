@@ -26,7 +26,9 @@ const path = Astro.url.pathname;
 </header>
 
 <style>
-  .nav { background: var(--space-gray); border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+  .nav { position: sticky; top: 0; z-index: 50; background: rgba(8, 38, 70, 0.88);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
   .nav__inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 64px; }
   .nav__brand { display: flex; align-items: baseline; gap: 10px; color: #fff; }
   .nav__brand:hover { text-decoration: none; }

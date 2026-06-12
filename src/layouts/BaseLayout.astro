@@ -57,6 +57,21 @@ const ogImage = new URL('/og-image.svg', Astro.site ?? 'https://platform.getsqe.
 </html>
 
 <script>
+  // Scroll reveal — JS applies .reveal, so without JS everything stays visible.
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
+      }),
+      { threshold: 0.12 },
+    );
+    document.querySelectorAll('main > section').forEach((s, i) => {
+      if (i === 0) return; // hero has its own entrance
+      s.classList.add('reveal');
+      io.observe(s);
+    });
+  }
+
   const dlg = document.getElementById('lightbox') as HTMLDialogElement | null;
   if (dlg) {
     const big = dlg.querySelector('.lightbox__img') as HTMLImageElement;

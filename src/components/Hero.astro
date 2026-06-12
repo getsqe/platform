@@ -3,10 +3,11 @@
 // right-hand panel later — placeholder for now.
 ---
 <section class="hero">
+  <span class="hero__slash" aria-hidden="true"></span>
   <div class="container hero__inner">
     <div class="hero__copy">
       <span class="hero__eyebrow">Cloud Independent Data Platform</span>
-      <h1 class="hero__title">Own your data.<br />Run anywhere.</h1>
+      <h1 class="hero__title">Own your data.<br /><em class="hl">Run anywhere.</em></h1>
       <p class="hero__lede">
         A sovereign, open-source data platform built on Apache Iceberg, Polaris, SQE,
         and OPA. Enterprise-grade security, AI-assisted analytics, and total cloud
@@ -35,28 +36,58 @@
 </section>
 
 <style>
-  .hero { position: relative; overflow: hidden; background: var(--space-gray); color: #fff; padding-block: clamp(48px, 7vw, 96px);
-    background-image: radial-gradient(900px 400px at 78% -10%, rgba(30, 232, 237, 0.1), transparent 60%), radial-gradient(700px 380px at 10% 110%, rgba(30, 128, 237, 0.16), transparent 60%); }
-  /* Brand slash pair — decorative, clipped to the dark band. */
+  .hero { position: relative; overflow: hidden; background: var(--space-gray); color: #fff; padding-block: clamp(56px, 8vw, 110px);
+    background-image:
+      radial-gradient(900px 400px at 78% -10%, rgba(30, 232, 237, 0.12), transparent 60%),
+      radial-gradient(700px 380px at 10% 110%, rgba(30, 128, 237, 0.18), transparent 60%),
+      radial-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+    background-size: auto, auto, 28px 28px; }
+  /* Brand slash field — blue + turquoise pair, clipped to the dark band. */
   .hero::before, .hero::after { content: ''; position: absolute; top: -12%; height: 124%; width: 86px;
     transform: skewX(-18deg); border-radius: 22px; pointer-events: none; }
-  .hero::before { right: 4%; background: rgba(30, 128, 237, 0.18); }
+  .hero::before { right: 4%; background: rgba(30, 128, 237, 0.20); }
   .hero::after { right: 12%; background: rgba(30, 232, 237, 0.07); }
+  /* Joyful Yellow sliver — the sharp accent in the field. */
+  .hero__slash { position: absolute; top: -12%; right: 10.2%; height: 124%; width: 12px;
+    background: rgba(255, 219, 78, 0.55); transform: skewX(-18deg); border-radius: 8px; pointer-events: none; }
   .hero__inner { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 52px; align-items: center; }
   .hero__eyebrow { display: inline-block; font-family: var(--font-mono); color: var(--turquoise); font-size: 0.8rem; letter-spacing: 0;
     font-weight: 400; background: rgba(30, 232, 237, 0.1); border: 1px solid rgba(30, 232, 237, 0.28);
     padding: 5px 14px; border-radius: 999px 999px 999px 4px; }
   .hero__title { margin: 14px 0 20px; font-size: clamp(2.6rem, 5.2vw, 4rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1.09; color: #fff; }
+  /* Marker-style Joyful Yellow underline on the key phrase. */
+  .hl { font-style: normal; background: linear-gradient(to top, rgba(255, 219, 78, 0.42) 0.16em, transparent 0.16em); border-radius: 2px; }
   .hero__lede { font-size: 1.12rem; color: rgba(255, 255, 255, 0.8); max-width: 46ch; }
   .hero__lede strong { color: #fff; }
   .hero__cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
   .hero__note { margin-top: 22px; font-size: 0.86rem; color: rgba(255, 255, 255, 0.55); }
 
-  /* Windowed product screenshot. */
+  /* Windowed product screenshot — floats up on entrance, lifts on hover. */
   .shot { border: 1px solid rgba(30, 232, 237, 0.22); border-radius: var(--radius); overflow: hidden;
-    background: rgba(2, 12, 23, 0.9); box-shadow: 0 20px 60px rgba(0,0,0,0.35); }
+    background: rgba(2, 12, 23, 0.9); box-shadow: 0 24px 70px rgba(0, 0, 0, 0.4);
+    transition: transform 0.25s ease, box-shadow 0.25s ease; }
+  .hero__demo:hover .shot { transform: translateY(-6px); box-shadow: 0 34px 90px rgba(0, 0, 0, 0.5); }
   .shot__bar { display: flex; gap: 7px; padding: 12px 14px; background: rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.08); }
   .shot__bar span { width: 11px; height: 11px; border-radius: 50%; background: rgba(255,255,255,0.18); }
+  .shot__bar span:first-child { background: rgba(255, 219, 78, 0.6); }
+  .shot__bar span:nth-child(2) { background: rgba(30, 232, 237, 0.45); }
+  .shot__bar span:nth-child(3) { background: rgba(30, 128, 237, 0.6); }
   .shot__img { display: block; width: 100%; height: auto; }
+
+  /* Staggered entrance. */
+  @keyframes hero-up { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+  .hero__eyebrow, .hero__title, .hero__lede, .hero__cta, .hero__note, .hero__demo {
+    animation: hero-up 0.65s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+  .hero__eyebrow { animation-delay: 0.05s; }
+  .hero__title { animation-delay: 0.14s; }
+  .hero__lede { animation-delay: 0.24s; }
+  .hero__cta { animation-delay: 0.34s; }
+  .hero__note { animation-delay: 0.44s; }
+  .hero__demo { animation-delay: 0.28s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__eyebrow, .hero__title, .hero__lede, .hero__cta, .hero__note, .hero__demo { animation: none; }
+    .shot, .hero__demo:hover .shot { transition: none; transform: none; }
+  }
   @media (max-width: 900px) { .hero__inner { grid-template-columns: 1fr; gap: 36px; } }
 </style>

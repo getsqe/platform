@@ -400,7 +400,9 @@ const roadmap = [
   .plans { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
   .plan { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
     padding: 26px 24px; display: flex; flex-direction: column; }
-  .plan__tag { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+  /* Label: pill with one straight corner, sentence case (brandbook). */
+  .plan__tag { display: inline-block; align-self: flex-start; font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0;
+    color: var(--space-gray); background: var(--soft-blue); padding: 4px 12px; border-radius: 999px 999px 999px 4px; }
   .plan__title { font-size: 1.4rem; margin: 8px 0 6px; }
   .plan__where { color: var(--text-muted); font-size: 0.95rem; }
   .plan__list { list-style: none; padding: 0; margin: 16px 0 0; }
@@ -418,8 +420,8 @@ const roadmap = [
   .quote__set { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px 18px; margin: 0; }
   .quote__set legend { font-weight: 800; font-size: 0.95rem; padding: 0 6px; }
   .opt { display: inline-flex; align-items: center; gap: 8px; margin: 6px 18px 6px 0; font-size: 0.95rem; cursor: pointer; }
-  .opt em { font-style: normal; font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.06em;
-    text-transform: uppercase; color: var(--accent); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; }
+  .opt em { font-style: normal; font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0;
+    color: var(--space-gray); background: var(--soft-blue); border-radius: 999px 999px 999px 3px; padding: 2px 8px; }
   .quote__field { display: flex; flex-direction: column; gap: 6px; font-weight: 700; font-size: 0.92rem; }
   .quote__field span { font-weight: 400; color: var(--text-muted); }
   .quote__field input, .quote__field textarea { font: inherit; font-weight: 400; padding: 10px 12px;

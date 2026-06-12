@@ -1,19 +1,48 @@
-/* getsqe.com theme — de-branded SQE web-UI visual language.
-   Palette + motifs derived from the SQE coordinator dashboard (itself a
-   de-branded SBP brandbook application). Reuse motifs, not brand identity. */
+/* platform.getsqe.com theme — SBP brandbook application.
+   Palette, type, and motifs per brandbook.schubergphilis.com:
+   TT Interphases, SBP Blue lead, rounded shapes (square+circle),
+   slash motif, labels as pill-with-one-straight-corner. */
+
+/* ---- brand font: TT Interphases (SBP licensed) ---- */
+@font-face {
+  font-family: 'TT Interphases';
+  src: url('/fonts/tt-interphases-regular.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'TT Interphases';
+  src: url('/fonts/tt-interphases-demibold.woff2') format('woff2');
+  font-weight: 600; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'TT Interphases';
+  src: url('/fonts/tt-interphases-bold.woff2') format('woff2');
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'TT Interphases';
+  src: url('/fonts/tt-interphases-extrabold.woff2') format('woff2');
+  font-weight: 800; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'TT Interphases Mono';
+  src: url('/fonts/tt-interphases-mono-regular.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
 
 :root {
-  /* palette */
-  --sqe-blue: #1e80ed;     /* primary accent, section markers, stat numbers */
-  --turquoise: #1ee8ed;    /* mono eyebrows, technical accents */
-  --midnight: #020c17;     /* darkest bg / text on light */
-  --space-gray: #082646;   /* dark hero / header bg */
-  --yellow: #ffdb4e;       /* the marker bar accent */
+  /* primary palette (brandbook) */
+  --sqe-blue: #1e80ed;     /* SBP Blue — lead color */
+  --turquoise: #1ee8ed;    /* Tropical Turquoise — technical accents */
+  --midnight: #020c17;     /* Midnight Dark */
+  --space-gray: #082646;   /* Space Gray — dark hero / header bg */
+  --yellow: #ffdb4e;       /* Joyful Yellow */
   --pale-blue: #f3f6fb;    /* light body bg */
-  --soft-blue: #e8f2fd;    /* cards, table headers */
+  --soft-blue: #e8f2fd;    /* Soft Blue — cards, table headers, labels */
   --gray-medium: #5a6782;  /* secondary text */
-  --green: #0e9f6e;        /* "full" / pass state */
-  --red: #d6336c;          /* "none" / fail state */
+  /* signal colors — data/infographics only (cell-yes / cell-no) */
+  --green: #0e9f6e;
+  --red: #d6336c;
 
   /* semantic */
   --bg: var(--pale-blue);
@@ -23,14 +52,14 @@
   --border: #dce4f0;
   --accent: var(--sqe-blue);
 
-  /* type */
-  --font-sans: 'Inter Variable', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', 'Menlo', monospace;
+  /* type — brandbook stacks (never Inter/Roboto substitutes) */
+  --font-sans: 'TT Interphases', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-mono: 'TT Interphases Mono', 'Courier New', Courier, monospace;
 
-  /* layout */
+  /* layout — square+circle: visibly rounded shapes */
   --maxw: 1120px;
-  --radius: 12px;
-  --radius-sm: 8px;
+  --radius: 18px;
+  --radius-sm: 10px;
 }
 
 * { box-sizing: border-box; }
@@ -54,14 +83,17 @@ body {
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
+/* Headings per brandbook scale: ExtraBold 800 for H1/H2, Bold 700 for H3/H4,
+   -0.04em tracking, tight 1.09 line height. Sentence case only. */
 h1, h2, h3, h4 {
-  line-height: 1.12;
-  letter-spacing: -0.02em;
+  line-height: 1.09;
+  letter-spacing: -0.04em;
   margin: 0 0 0.4em;
 }
-h1 { font-weight: 900; font-size: clamp(2.4rem, 5vw, 3.6rem); }
-h2 { font-weight: 900; font-size: clamp(1.8rem, 3.4vw, 2.6rem); }
-h3 { font-weight: 800; font-size: 1.35rem; }
+h1 { font-weight: 800; font-size: clamp(2.4rem, 5vw, 3.6rem); }
+h2 { font-weight: 800; font-size: clamp(1.8rem, 3.4vw, 2.6rem); }
+h3 { font-weight: 700; font-size: 1.35rem; }
+h4 { font-weight: 700; }
 
 p { margin: 0 0 1rem; }
 
@@ -74,43 +106,48 @@ p { margin: 0 0 1rem; }
 .section { padding-block: clamp(56px, 9vw, 110px); }
 .section--tight { padding-block: clamp(40px, 6vw, 72px); }
 
-/* ---- motif: marker bar (short 56x4 bar under headings) ---- */
+/* ---- motif: brand slash (the SBP signature mark) under headings ---- */
 .marker-bar {
   display: block;
-  width: 56px;
-  height: 4px;
-  border-radius: 2px;
+  width: 14px;
+  height: 26px;
   background: var(--sqe-blue);
-  margin: 0 0 22px;
+  border-radius: 4px;
+  transform: skewX(-18deg);
+  margin: 0 0 22px 6px;
 }
 .marker-bar--yellow { background: var(--yellow); }
 .marker-bar--center { margin-inline: auto; }
 
-/* ---- motif: mono eyebrow (small turquoise mono label above titles) ---- */
+/* ---- motif: label — pill with one straight corner (signature SBP shape) ---- */
 .eyebrow {
   display: inline-block;
   font-family: var(--font-mono);
   font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  color: var(--sqe-blue);
-  margin-bottom: 12px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--space-gray);
+  background: var(--soft-blue);
+  padding: 5px 14px;
+  border-radius: 999px 999px 999px 4px;
+  margin-bottom: 14px;
 }
 
-/* ---- motif: section-marker bar before h3-level headings ---- */
+/* ---- motif: slash before h3-level headings ---- */
 .section-marker {
   position: relative;
-  padding-left: 16px;
+  padding-left: 20px;
 }
 .section-marker::before {
   content: '';
   position: absolute;
-  left: 0;
-  top: 0.18em;
-  width: 4px;
+  left: 2px;
+  top: 0.12em;
+  width: 8px;
   height: 1em;
   background: var(--sqe-blue);
   border-radius: 2px;
+  transform: skewX(-18deg);
 }
 
 /* ---- motif: heavy stat numbers, tabular mono ---- */
@@ -130,15 +167,15 @@ p { margin: 0 0 1rem; }
   padding: 24px;
 }
 
-/* ---- buttons ---- */
+/* ---- buttons: fully rounded pill (brandbook) ---- */
 .btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   font-weight: 700;
   font-size: 0.98rem;
-  padding: 12px 22px;
-  border-radius: var(--radius-sm);
+  padding: 12px 26px;
+  border-radius: 999px;
   border: 1px solid transparent;
   transition: transform 0.08s ease, background 0.15s ease, border-color 0.15s ease;
   cursor: pointer;

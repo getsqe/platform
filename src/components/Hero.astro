@@ -35,11 +35,18 @@
 </section>
 
 <style>
-  .hero { background: var(--space-gray); color: #fff; padding-block: clamp(48px, 7vw, 96px);
+  .hero { position: relative; overflow: hidden; background: var(--space-gray); color: #fff; padding-block: clamp(48px, 7vw, 96px);
     background-image: radial-gradient(900px 400px at 78% -10%, rgba(30, 232, 237, 0.1), transparent 60%), radial-gradient(700px 380px at 10% 110%, rgba(30, 128, 237, 0.16), transparent 60%); }
-  .hero__inner { display: grid; grid-template-columns: 1fr 1fr; gap: 52px; align-items: center; }
-  .hero__eyebrow { font-family: var(--font-mono); color: var(--turquoise); font-size: 0.82rem; letter-spacing: 0.1em; font-weight: 600; }
-  .hero__title { margin: 14px 0 20px; font-size: clamp(2.6rem, 5.2vw, 4rem); font-weight: 900; letter-spacing: -0.03em; color: #fff; }
+  /* Brand slash pair — decorative, clipped to the dark band. */
+  .hero::before, .hero::after { content: ''; position: absolute; top: -12%; height: 124%; width: 86px;
+    transform: skewX(-18deg); border-radius: 22px; pointer-events: none; }
+  .hero::before { right: 4%; background: rgba(30, 128, 237, 0.18); }
+  .hero::after { right: 12%; background: rgba(30, 232, 237, 0.07); }
+  .hero__inner { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 52px; align-items: center; }
+  .hero__eyebrow { display: inline-block; font-family: var(--font-mono); color: var(--turquoise); font-size: 0.8rem; letter-spacing: 0;
+    font-weight: 400; background: rgba(30, 232, 237, 0.1); border: 1px solid rgba(30, 232, 237, 0.28);
+    padding: 5px 14px; border-radius: 999px 999px 999px 4px; }
+  .hero__title { margin: 14px 0 20px; font-size: clamp(2.6rem, 5.2vw, 4rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1.09; color: #fff; }
   .hero__lede { font-size: 1.12rem; color: rgba(255, 255, 255, 0.8); max-width: 46ch; }
   .hero__lede strong { color: #fff; }
   .hero__cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }

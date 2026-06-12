@@ -41,10 +41,11 @@ const year = new Date().getFullYear();
 <style>
   .footer { background: var(--midnight); color: rgba(255, 255, 255, 0.7); padding-top: 56px; }
   .footer__inner { display: grid; grid-template-columns: 1.4fr 2fr; gap: 40px; padding-bottom: 40px; }
-  .footer__logo { font-weight: 900; font-size: 1.25rem; color: #fff; letter-spacing: -0.02em; }
+  .footer__logo { font-weight: 800; font-size: 1.25rem; color: #fff; letter-spacing: -0.04em; }
   .footer__tag { margin-top: 8px; font-size: 0.92rem; max-width: 32ch; }
   .footer__cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
-  .footer__cols h4 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--turquoise); font-family: var(--font-mono); margin-bottom: 12px; }
+  /* Sentence case (brandbook: never all caps); mono as a pinch of tech. */
+  .footer__cols h4 { font-size: 0.8rem; font-weight: 400; letter-spacing: 0; color: var(--turquoise); font-family: var(--font-mono); margin-bottom: 12px; }
   .footer__cols a { display: block; color: rgba(255, 255, 255, 0.75); font-size: 0.92rem; margin-bottom: 8px; }
   .footer__cols a:hover { color: #fff; }
   .footer__bottom { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-block: 22px; font-size: 0.82rem; color: rgba(255, 255, 255, 0.5); }

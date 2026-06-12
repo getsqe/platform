@@ -1,8 +1,5 @@
 ---
-import '@fontsource-variable/inter';
-import '@fontsource/jetbrains-mono/400.css';
-import '@fontsource/jetbrains-mono/600.css';
-import '@fontsource/jetbrains-mono/800.css';
+// Brand font (TT Interphases) is self-hosted via @font-face in theme.css.
 import '../styles/theme.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
@@ -40,6 +37,9 @@ const ogImage = new URL('/og-image.svg', Astro.site ?? 'https://platform.getsqe.
     <meta name="twitter:card" content="summary_large_image" />
 
     <meta name="theme-color" content="#082646" />
+
+    <link rel="preload" href="/fonts/tt-interphases-regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/tt-interphases-extrabold.woff2" as="font" type="font/woff2" crossorigin />
   </head>
   <body class:list={[darkHeader && 'has-dark-header']}>
     <Nav />

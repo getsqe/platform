@@ -15,6 +15,16 @@
 #   realms/[A-Za-z0-9_-]+ - Keycloak realm paths (internal realm names)
 set -euo pipefail
 
+# Text extensions that reach the published output. Keep in sync across the
+# three site gates; a gap here is silent.
+#
+# .mdx is NOT optional: the docs-site content under /docs is largely .mdx
+# (every use-case and tutorial page). .js matters because generated SEARCH
+# INDEXES are JavaScript — Starlight's pagefind and mdBook's searchindex both
+# embed the full text of every page, so an HTML-only scan passes while the
+# index still carries a leaked string the site's search box will surface.
+SCAN_EXTS=(md mdx json html svg js mjs xml txt yml yaml css)
+
 LEAK_RE='[0-9]{12}|chore/|feat/|eu-(central|west|north)-[0-9]|amazonaws|MR !|chameleon\.local|realms/[A-Za-z0-9_-]+'
 
 if [[ $# -eq 0 ]]; then
@@ -22,17 +32,32 @@ if [[ $# -eq 0 ]]; then
   exit 2
 fi
 
+find_expr=()
+for ext in "${SCAN_EXTS[@]}"; do
+  [[ ${#find_expr[@]} -eq 0 ]] || find_expr+=(-o)
+  find_expr+=(-name "*.${ext}")
+done
+
 hits=0
+scanned=0
 while IFS= read -r -d '' f; do
+  scanned=$((scanned + 1))
   while IFS= read -r line; do
     [[ -n "$line" ]] || continue
     echo "  LEAK: $f: $line"
     hits=$((hits + 1))
   done < <(grep -nEi "$LEAK_RE" "$f" || true)
-done < <(find "$@" -type f \( -name '*.md' -o -name '*.json' -o -name '*.html' -o -name '*.svg' \) -print0)
+done < <(find "$@" -type f \( "${find_expr[@]}" \) -print0)
 
 if [[ "$hits" -gt 0 ]]; then
   echo "leak-scan: $hits hit(s) — ABORT" >&2
   exit 1
 fi
-echo "leak-scan: clean (0 hits)"
+
+# A scan that matched nothing is indistinguishable from a clean one in the
+# output, and a wrong path is an easy mistake. Refuse to report "clean" for it.
+if [[ "$scanned" -eq 0 ]]; then
+  echo "leak-scan: matched 0 files under: $* — refusing to report clean" >&2
+  exit 2
+fi
+echo "leak-scan: clean (0 hits, $scanned files)"

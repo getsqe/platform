@@ -28,6 +28,8 @@ expect "real realm caught"             1 'curl "$KC/realms/iceberg/protocol/open
 expect "chameleon.local caught"        1 'endpoint = "http://chameleon.local"'
 expect "account id caught"             1 'arn:aws:iam::987654321098:role/r'
 expect "bare quoted realm default caught" 1 'CHAMELEON_REALM           realm (default "iceberg")'
+expect "unquoted realm=iceberg caught"  1 'CHAMELEON_REALM=iceberg'
+expect "yaml realm: iceberg caught"     1 'realm: iceberg'
 # Public product identifiers must NOT be treated as leaks.
 expect "chameleon_ resource allowed"   0 'resource "chameleon_workspace" "team_a" {}'
 expect "terraform registry allowed"    0 'source = "registry.terraform.io/schubergphilis/chameleon"'
@@ -36,5 +38,6 @@ expect "realms/example-prod caught"    1 'curl "$KC/realms/example-prod/protocol
 expect "platform.example.internal allowed" 0 'endpoint = "http://platform.example.internal.corp"'
 # The realm-default rule must not fire on ordinary Apache Iceberg prose.
 expect "Apache Iceberg prose allowed"  0 'Apache Iceberg is the table format this platform is built on.'
+expect "Iceberg-near-realm prose allowed" 0 'Iceberg tables in the realm are managed by Polaris.'
 
 [ "$fails" -eq 0 ] && echo "leak-scan.test: all passed" || { echo "leak-scan.test: $fails failed"; exit 1; }

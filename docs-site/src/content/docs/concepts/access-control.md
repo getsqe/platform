@@ -131,13 +131,14 @@ implied grants, so each underlying capability is listed explicitly:
 > actually imports. It is a **contract shared with other writers** — SQE authors Ranger
 > policies too, and the profile exists so both sides mean the same thing by `SELECT`.
 >
-> It ships **seeds**, not finished access-type lists. The transitive closure comes from the
-> `impliedGrants` in the Ranger service definition for Polaris — there is only one such file,
-> not a copy that could drift — and is applied at **write** time by
-> `ranger_authorizer.expand_access_types`. Because Polaris's authorizer ignores `impliedGrants`,
-> a policy listing only the seed is enforced as *just* the seed. So the grant profile and the
-> service definition are **one contract: anything vendoring the profile must vendor the service
-> definition with it**, or it will under-grant. A contract test fails CI on drift between them.
+> It ships **seeds**, not finished access-type lists. The transitive closure — the access-type
+> implication graph — is authored in this repo; the upstream Ranger service definition for
+> Polaris declares no implied grants of its own. As of profile **v5** that graph travels inside
+> the grant profile itself, so a writer vendoring the profile no longer needs a separate service
+> definition alongside it to compute the closure. The closure is applied at **write** time by
+> `ranger_authorizer.expand_access_types`; because Polaris's authorizer ignores `impliedGrants`,
+> a policy listing only the seed is enforced as *just* the seed. A contract test keeps the
+> profile's copy of the graph and the generated module the backend imports in step.
 
 | Privilege | Ranger access types |
 |-----------|---------------------|
@@ -643,9 +644,3 @@ curl -sS -X POST https://<host>/api/platform/v1/access/check \
 #    SELECT * FROM analytics.sales.orders LIMIT 10;   → succeeds
 #    A user NOT in SG-DataAnalysts → Polaris/Ranger denies the LOAD_TABLE.
 ```
-
----
-
-## See also
-- The Ranger consolidation track and Phase-2 (row/column/ABAC) plan, tracked
-  separately from this reference.

@@ -58,7 +58,17 @@ echo "→ sanitizing synced copies (source untouched)"
 # "iceberg")`) rather than the `realms/iceberg` URL-path form the rule above
 # already catches. Scoping to a `realm` token within 60 chars of a quoted
 # `iceberg` targets exactly those two lines; a backreference for the quote
-# char doesn't work under BSD sed, hence two rules, one per quote style.
+# char doesn't work under BSD sed, hence two rules, one per quote style. The
+# `I` flag makes both case-insensitive (`CHAMELEON_REALM="iceberg"` is
+# uppercase `REALM`, not `[Rr]ealm`) — without it the gate's matching LEAK_RE
+# rule (also case-insensitive) would catch a form this sanitiser couldn't
+# rewrite, aborting the sync instead of self-healing it.
+#
+# The gate's LEAK_RE additionally has an UNQUOTED-form realm rule
+# (`CHAMELEON_REALM=iceberg`, `realm: iceberg`) with no sanitiser counterpart
+# here: nothing ships in that form today, so if a future re-sync introduces
+# one, failing the sync closed (forcing a sanitiser rule to be added then) is
+# the correct outcome, not a bug.
 #
 # Walks BOTH src and public: public/ is rsynced too (e.g. public/scripts/*.js)
 # and must not be a sanitizer/gate blind spot just because it isn't "docs
@@ -72,8 +82,8 @@ while IFS= read -r -d '' f; do
     -e 's#\*Powered by \[Schuberg Philis\]\(https://schubergphilis\.com\)[^*]*\*##g' \
     -e 's#"name": "Schuberg Philis"#"name": "Cloud Independent Data Platform"#g' \
     -e 's#https://schubergphilis\.com#https://platform.example#g' \
-    -e "s#([Rr]ealm[^']{0,60})'iceberg'#\1'example'#g" \
-    -e "s#([Rr]ealm[^\"]{0,60})\"iceberg\"#\1\"example\"#g" \
+    -e "s#([Rr]ealm[^']{0,60})'iceberg'#\1'example'#gI" \
+    -e "s#([Rr]ealm[^\"]{0,60})\"iceberg\"#\1\"example\"#gI" \
     "$f"
 done < <(find "$DEST/src" "$DEST/public" -type f \( \
   -name '*.md' -o -name '*.mdx' -o -name '*.json' -o -name '*.html' \

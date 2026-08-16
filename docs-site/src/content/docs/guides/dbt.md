@@ -132,4 +132,9 @@ chameleon workspace delete analytics-demo --yes
 ## Scope
 
 This guide covers the dbt project lifecycle: scaffold, seed, compile, run, test.
-Sessions, sources and freshness, lineage, and scheduling are covered separately.
+
+Scheduling a dbt run is covered in [Orchestration](/concepts/orchestration/). Lineage shows up
+in passing in the [data engineer tutorial](/guides/tutorials/data-engineer/) and the
+[dbt lifecycle use case](/guides/use-cases/dbt-lifecycle/), but isn't documented here. Dbt
+sessions (the interactive editing surface behind the UI) and sources and freshness aren't
+documented anywhere yet.

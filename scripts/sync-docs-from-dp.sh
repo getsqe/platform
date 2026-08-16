@@ -50,6 +50,19 @@ echo "→ sanitizing synced copies (source untouched)"
 # the literal marketing-site URL (brand chrome the site policy keeps off
 # every page but About) — they do not match the lowercase schubergphilis org
 # slug in the public Terraform registry/GitHub URLs, which ship verbatim.
+#
+# The realm-name pair below is deliberately NOT a blanket `iceberg` replace:
+# "iceberg" appears 113 times in the synced tree (Apache Iceberg, the product
+# this platform is built on) and only twice as the internal Keycloak realm
+# name, both as a bare quoted default (`Defaults to 'iceberg'`, `(default
+# "iceberg")`) rather than the `realms/iceberg` URL-path form the rule above
+# already catches. Scoping to a `realm` token within 60 chars of a quoted
+# `iceberg` targets exactly those two lines; a backreference for the quote
+# char doesn't work under BSD sed, hence two rules, one per quote style.
+#
+# Walks BOTH src and public: public/ is rsynced too (e.g. public/scripts/*.js)
+# and must not be a sanitizer/gate blind spot just because it isn't "docs
+# content" in the narrow sense.
 while IFS= read -r -d '' f; do
   sed -i '' -E \
     -e 's#chameleon\.local#platform.example#g' \
@@ -59,9 +72,15 @@ while IFS= read -r -d '' f; do
     -e 's#\*Powered by \[Schuberg Philis\]\(https://schubergphilis\.com\)[^*]*\*##g' \
     -e 's#"name": "Schuberg Philis"#"name": "Cloud Independent Data Platform"#g' \
     -e 's#https://schubergphilis\.com#https://platform.example#g' \
+    -e "s#([Rr]ealm[^']{0,60})'iceberg'#\1'example'#g" \
+    -e "s#([Rr]ealm[^\"]{0,60})\"iceberg\"#\1\"example\"#g" \
     "$f"
-done < <(find "$DEST/src" -type f \( -name '*.md' -o -name '*.mdx' -o -name '*.json' \) -print0)
+done < <(find "$DEST/src" "$DEST/public" -type f \( \
+  -name '*.md' -o -name '*.mdx' -o -name '*.json' -o -name '*.html' \
+  -o -name '*.svg' -o -name '*.js' -o -name '*.mjs' -o -name '*.xml' \
+  -o -name '*.txt' -o -name '*.yml' -o -name '*.yaml' -o -name '*.css' \
+  \) -print0)
 
 echo "→ leak-scan gate over synced source"
-bash "$HERE/scripts/leak-scan.sh" "$DEST/src"
+bash "$HERE/scripts/leak-scan.sh" "$DEST/src" "$DEST/public"
 echo "✓ docs sync clean: $DEST"

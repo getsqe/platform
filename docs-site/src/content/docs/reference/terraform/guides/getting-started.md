@@ -40,7 +40,7 @@ terraform {
 # Auth is read from the environment:
 #   CHAMELEON_ENDPOINT        BFF base URL (e.g. https://platform.example)
 #   CHAMELEON_OIDC_ENDPOINT   Keycloak base URL
-#   CHAMELEON_REALM           realm (default "iceberg")
+#   CHAMELEON_REALM           realm (default "example")
 #   CHAMELEON_USERNAME        ROPC username   (or CHAMELEON_TOKEN for a bearer)
 #   CHAMELEON_PASSWORD        ROPC password
 provider "chameleon" {}

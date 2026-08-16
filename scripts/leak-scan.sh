@@ -13,6 +13,10 @@
 #   chore/ | feat/ | MR ! - internal branch / merge-request refs
 #   chameleon\.local   - the platform's internal dev hostname
 #   realms/[A-Za-z0-9_-]+ - Keycloak realm paths (internal realm names)
+#   realm...['"]iceberg['"] - the internal realm name as a bare quoted default
+#                      (not just the realms/ URL-path form above), scoped to a
+#                      `realm` token within 60 chars so it can't fire on
+#                      ordinary Apache Iceberg prose
 set -euo pipefail
 
 # Text extensions that reach the published output. Keep in sync across the
@@ -25,7 +29,7 @@ set -euo pipefail
 # index still carries a leaked string the site's search box will surface.
 SCAN_EXTS=(md mdx json html svg js mjs xml txt yml yaml css)
 
-LEAK_RE='[0-9]{12}|chore/|feat/|eu-(central|west|north)-[0-9]|amazonaws|MR !|chameleon\.local|realms/[A-Za-z0-9_-]+'
+LEAK_RE="[0-9]{12}|chore/|feat/|eu-(central|west|north)-[0-9]|amazonaws|MR !|chameleon\\.local|realms/[A-Za-z0-9_-]+|realm[^'\"]{0,60}['\"]iceberg['\"]"
 
 # Strip the sanitiser's OWN placeholders before matching. The realms rule is
 # deliberately broad (any realm name is internal), which means it also matches

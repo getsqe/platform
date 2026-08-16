@@ -64,7 +64,7 @@ provider "chameleon" {
 - `endpoint` (String) Chameleon BFF API base URL. May also be set via CHAMELEON_ENDPOINT.
 - `oidc_endpoint` (String) Keycloak base URL for token acquisition. Required for client_credentials and ropc auth. May also be set via CHAMELEON_OIDC_ENDPOINT.
 - `password` (String, Sensitive) Password for ROPC auth. May also be set via CHAMELEON_PASSWORD.
-- `realm` (String) Keycloak realm name. Defaults to 'iceberg'. May also be set via CHAMELEON_REALM.
+- `realm` (String) Keycloak realm name. Defaults to 'example'. May also be set via CHAMELEON_REALM.
 - `ssl_verify` (Boolean) Verify TLS certificates. Defaults to true. May also be set via CHAMELEON_SSL_VERIFY.
 - `timeout` (Number) HTTP request timeout in seconds. Defaults to 30.
 - `token` (String, Sensitive) Static bearer token. Takes priority over other auth methods. May also be set via CHAMELEON_TOKEN.

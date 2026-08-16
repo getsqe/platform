@@ -18,9 +18,19 @@
 #                      `realm` token within 60 chars so it can't fire on
 #                      ordinary Apache Iceberg prose
 #   realm...iceberg    - same, unquoted forms (CHAMELEON_REALM=iceberg,
-#                      `realm: iceberg`, backticked `` `iceberg` ``), scoped to
-#                      non-alphanumeric separators within 20 chars of `realm`
-#                      so ordinary Iceberg/realm prose still passes
+#                      `realm: iceberg`, backticked `` `iceberg` ``, `realm =
+#                      "iceberg"`), scoped to an assignment/default context
+#                      (`realm` then `:`/`=` then optionally a quote, or
+#                      `realm` then a backtick) rather than mere proximity —
+#                      a bare-proximity version (realm within N chars of
+#                      iceberg) produced false positives on ordinary
+#                      documentation prose given this platform's subject
+#                      matter (Keycloak realms AND Iceberg REST catalogs
+#                      genuinely appear near each other in real sentences).
+#                      One irreducible false positive remains by design:
+#                      "Choose a realm: Iceberg tables..." is textually
+#                      identical to the YAML form (`realm: iceberg`) this
+#                      rule exists to catch — see leak-scan.test.sh.
 set -euo pipefail
 
 # Text extensions that reach the published output. Keep in sync across the
@@ -33,7 +43,7 @@ set -euo pipefail
 # index still carries a leaked string the site's search box will surface.
 SCAN_EXTS=(md mdx json html svg js mjs xml txt yml yaml css)
 
-LEAK_RE="[0-9]{12}|chore/|feat/|eu-(central|west|north)-[0-9]|amazonaws|MR !|chameleon\\.local|realms/[A-Za-z0-9_-]+|realm[^'\"]{0,60}['\"]iceberg['\"]|realm[^A-Za-z0-9]{0,20}iceberg"
+LEAK_RE="[0-9]{12}|chore/|feat/|eu-(central|west|north)-[0-9]|amazonaws|MR !|chameleon\\.local|realms/[A-Za-z0-9_-]+|realm[^'\"]{0,60}['\"]iceberg['\"]|realm[^A-Za-z0-9]{0,4}[:=][^A-Za-z0-9\"']{0,4}[\"'\`]?iceberg|realm[^A-Za-z0-9]{0,3}\`iceberg\`"
 
 # Strip the sanitiser's OWN placeholders before matching. The realms rule is
 # deliberately broad (any realm name is internal), which means it also matches

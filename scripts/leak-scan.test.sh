@@ -39,5 +39,17 @@ expect "platform.example.internal allowed" 0 'endpoint = "http://platform.exampl
 # The realm-default rule must not fire on ordinary Apache Iceberg prose.
 expect "Apache Iceberg prose allowed"  0 'Apache Iceberg is the table format this platform is built on.'
 expect "Iceberg-near-realm prose allowed" 0 'Iceberg tables in the realm are managed by Polaris.'
+# The unquoted-form rule requires an assignment/default context (realm then
+# :/= then optionally a quote, or realm then a backtick) rather than mere
+# proximity — a bare-proximity version produced false positives on ordinary
+# prose given this platform's subject matter (Keycloak realms AND Iceberg
+# REST catalogs genuinely appear near each other in real sentences).
+expect "realm/Iceberg semicolon prose allowed" 0 'Polaris exposes a security realm; Iceberg REST clients authenticate against it directly.'
+expect "realm/Iceberg parenthetical allowed" 0 'See the realm (Iceberg REST catalog OAuth2 scope) documentation for details.'
+expect "realm = \"iceberg\" assignment caught" 1 'realm = "iceberg"'
+# Known accepted false positive, NOT a bug: this sentence is textually
+# identical to the YAML form (`realm: iceberg`) the rule exists to catch, so
+# it cannot be excluded without also losing that case. Documented, not fixed.
+expect "accepted FP: 'Choose a realm: Iceberg...' caught" 1 'Choose a realm: Iceberg tables inherit namespace-level access from it.'
 
 [ "$fails" -eq 0 ] && echo "leak-scan.test: all passed" || { echo "leak-scan.test: $fails failed"; exit 1; }

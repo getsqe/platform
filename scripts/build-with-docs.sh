@@ -28,8 +28,11 @@ rm -f dist/docs/sitemap-index.xml dist/docs/sitemap-0.xml
 # the sitemap itself above, so leaving the tag would ship a 404 reference on
 # all ~534 pages. Strip it so "no sitemap anywhere" is actually true. This
 # runs every build, since the docs build regenerates dist/docs from scratch.
+# perl, not sed: `sed -i ''` is BSD-only (macOS) — GNU sed on ubuntu-latest
+# parses the space-separated '' as the script itself, not a backup suffix,
+# and mis-shifts the rest of the arguments. perl -pi -e is identical on both.
 find dist/docs -name '*.html' -print0 \
-  | xargs -0 sed -i '' -E 's#<link rel="sitemap"[^>]*/>##g'
+  | xargs -0 perl -pi -e 's{<link rel="sitemap"[^>]*/>}{}g'
 
 # grep -l exits 1 on zero matches (the expected outcome here); under
 # pipefail that would otherwise kill the script via set -e before this

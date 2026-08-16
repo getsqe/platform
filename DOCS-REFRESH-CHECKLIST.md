@@ -57,10 +57,10 @@ table.
 | 5 | browse-catalog-namespace.png | Clean. Generic namespace/table names (analytics_db, product_sales). |
 | 6 | browse-catalog-overview.png | Clean. Empty "pick a catalog" state. |
 | 7 | browse-catalog-table.png | Clean. `product_sales` table, generic demo columns (product_name, category, region, units_sold, revenue). |
-| 8 | dbt-lifecycle-connection.png | **OPEN QUESTION (non-blocking):** demo git remote `https://github.com/sovereign-data/dbt-test-1`. Not an account id/secret/PII, but a real, resolvable GitHub URL that does not appear anywhere in the synced text content — unconfirmed whether that org is fictional or real. Raised to the user directly; follow up before this recurs unexamined in a future refresh. |
+| 8 | dbt-lifecycle-connection.png | **OPEN QUESTION (non-blocking):** demo git remote is a real, resolvable GitHub URL under a demo-looking org that does not appear anywhere in the synced text content — unconfirmed whether that org is fictional or real. Not an account id/secret/PII. Tracked internally (parent repo); follow up before this recurs unexamined in a future refresh. |
 | 9 | dbt-lifecycle-ide.png | Clean. Generic dbt project file tree (gold/silver models, schema.yml). |
 | 10 | dbt-lifecycle-lineage.png | Clean. Generic seed/model lineage graph (products/orders/customers -> stg_* -> dim_*/fct_*). |
-| 11 | dbt-lifecycle-project.png | Same open question as #8 (`ws_acme_analytics.dbt_models`, same `sovereign-data` remote). |
+| 11 | dbt-lifecycle-project.png | Same open question as #8 (`ws_acme_analytics.dbt_models`, same demo git remote). |
 | 12 | dbt-lifecycle-run.png | Clean. dbt run log output (dbt 1.11.12, trino adapter), no secrets. |
 | 13 | dbt-lifecycle-tests.png | Clean. dbt_utils internal file tree, generic test names, all passing. |
 | 14 | grant-access-dialog.png | Codename "Chameleon" visible (`chameleon-svc` grantee). **Accepted per spec D3** — see note above; not a leak. |

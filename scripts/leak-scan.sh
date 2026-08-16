@@ -31,6 +31,16 @@
 #                      "Choose a realm: Iceberg tables..." is textually
 #                      identical to the YAML form (`realm: iceberg`) this
 #                      rule exists to catch — see leak-scan.test.sh.
+#   vpf-data-ai        - internal GitLab group path
+#   sbp\.gitlab        - internal GitLab hostname fragment
+#   sovereign-data     - internal Harbor registry identifier
+#                      (repo.sovereign-data.org, per $DP/Makefile + RELEASE.md)
+#   /Users/[a-z]+/git  - .sh-ONLY (see SH_LEAK_RE below): a maintainer's local
+#                      home-directory checkout path (this is exactly how the
+#                      DP_DIR default leak shipped: a hardcoded path in a
+#                      public sync script). Not applied to published content —
+#                      would false-positive on ordinary prose showing a local
+#                      checkout path unrelated to any real leak.
 set -euo pipefail
 
 # Text extensions that reach the published output. Keep in sync across the
@@ -41,9 +51,42 @@ set -euo pipefail
 # INDEXES are JavaScript — Starlight's pagefind and mdBook's searchindex both
 # embed the full text of every page, so an HTML-only scan passes while the
 # index still carries a leaked string the site's search box will surface.
-SCAN_EXTS=(md mdx json html svg js mjs xml txt yml yaml css)
+# .sh matters because the sync SCRIPTS THEMSELVES are published in this repo —
+# a hardcoded source path in a script is exactly the leak this gate now exists
+# to catch (see the DP_DIR incident this rule set was added for).
+SCAN_EXTS=(md mdx json html svg js mjs xml txt yml yaml css sh)
 
-LEAK_RE="[0-9]{12}|chore/|feat/|eu-(central|west|north)-[0-9]|amazonaws|MR !|chameleon\\.local|realms/[A-Za-z0-9_-]+|realm[^'\"]{0,60}['\"]iceberg['\"]|realm[^A-Za-z0-9]{0,4}[:=][^A-Za-z0-9\"']{0,4}[\"'\`]?iceberg|realm[^A-Za-z0-9]{0,3}\`iceberg\`"
+LEAK_RE="[0-9]{12}|chore/|feat/|eu-(central|west|north)-[0-9]|amazonaws|MR !|chameleon\\.local|realms/[A-Za-z0-9_-]+|realm[^'\"]{0,60}['\"]iceberg['\"]|realm[^A-Za-z0-9]{0,4}[:=][^A-Za-z0-9\"']{0,4}[\"'\`]?iceberg|realm[^A-Za-z0-9]{0,3}\`iceberg\`|vpf-data-ai|sbp\\.gitlab"
+
+# NOT a rule: `sovereign-data`. It looks internal (repo.sovereign-data.org is
+# the container registry, per the source repo's Makefile/RELEASE.md) but the
+# apex domain is PUBLIC-FACING — info@sovereign-data.org is this very site's
+# published contact address, on the live index page since 2026-06-09. Adding it
+# here trips the gate on our own marketing copy. Verified by doing exactly that.
+
+# .sh files get a NARROWER rule set: only internal-identifier/path rules, not
+# content rules (eu-region, amazonaws, realm/iceberg forms). Sync scripts
+# legitimately describe those redaction TARGETS in their own sed commands and
+# comments (e.g. `-e 's/chameleon\.local/platform.example/g'`), which would
+# otherwise self-trigger the moment .sh became scannable. The identifier rules
+# below have no such legitimate occurrence — they exist to catch exactly the
+# DP_DIR-style hardcoded path this whole rule set was added for.
+# `/Users/[a-z]+/git` is .sh-ONLY (not in LEAK_RE above): it would
+# false-positive on ordinary published prose (e.g. a docs snippet showing a
+# local checkout path) that has nothing to do with the maintainer's own
+# machine — `vpf-data-ai` already catches the real leak this rule targets.
+SH_LEAK_RE="[0-9]{12}|vpf-data-ai|sbp\\.gitlab|/Users/[a-z]+/git|sovereign-data"
+
+# The gate's own pattern-definition file and its behavioural-test fixtures are
+# exempt by their OWN PATH (not a bare basename match, which would also skip
+# any synced file that happened to be named identically): their entire
+# purpose is to contain the literal strings above, either as regex source or
+# as synthetic examples of what the gate must catch. That is not a real
+# disclosure — no different from a scanner's own signature file containing
+# its signatures — so scanning them adds noise, not safety. Nothing else is
+# exempt.
+SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SELF_EXEMPT=("$SELF_DIR/leak-scan.sh" "$SELF_DIR/leak-scan.test.sh")
 
 # Strip the sanitiser's OWN placeholders before matching. The realms rule is
 # deliberately broad (any realm name is internal), which means it also matches
@@ -68,12 +111,18 @@ done
 hits=0
 scanned=0
 while IFS= read -r -d '' f; do
+  resolved_f="$(cd "$(dirname "$f")" && pwd)/$(basename "$f")"
+  for ex in "${SELF_EXEMPT[@]}"; do
+    [[ "$resolved_f" == "$ex" ]] && continue 2
+  done
   scanned=$((scanned + 1))
+  re="$LEAK_RE"
+  [[ "$f" == *.sh ]] && re="$SH_LEAK_RE"
   while IFS= read -r line; do
     [[ -n "$line" ]] || continue
     echo "  LEAK: $f: $line"
     hits=$((hits + 1))
-  done < <(sed -E "$ALLOWLIST_SED" "$f" | grep -nEi "$LEAK_RE" || true)
+  done < <(sed -E "$ALLOWLIST_SED" "$f" | grep -nEi "$re" || true)
 done < <(find "$@" -type f \( "${find_expr[@]}" \) -print0)
 
 if [[ "$hits" -gt 0 ]]; then

@@ -10,7 +10,9 @@
 #   3. Run the BLOCKING leak-scan gate. Any hit aborts (exit 1).
 set -euo pipefail
 
-DP_DIR="${DP_DIR:-/Users/jjverhoeks/git/schuberg/vpf-data-ai/chameleon/Applications/data-platform}"
+# No default: this repo is public, and the real path discloses internal
+# usernames/group layout. A missing DP_DIR fails loudly instead.
+DP_DIR="${DP_DIR:?set DP_DIR to your local data-platform checkout}"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SRC="$DP_DIR/docs/marketing/cloud-independent-data-platform.md"
 DEST="$HERE/src/content/source/cloud-independent-data-platform.md"

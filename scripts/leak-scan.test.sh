@@ -30,5 +30,8 @@ expect "account id caught"             1 'arn:aws:iam::987654321098:role/r'
 # Public product identifiers must NOT be treated as leaks.
 expect "chameleon_ resource allowed"   0 'resource "chameleon_workspace" "team_a" {}'
 expect "terraform registry allowed"    0 'source = "registry.terraform.io/schubergphilis/chameleon"'
+# Regression guards: placeholders must be anchored, not bare substring strips.
+expect "realms/example-prod caught"    1 'curl "$KC/realms/example-prod/protocol/openid-connect/token"'
+expect "platform.example.internal allowed" 0 'endpoint = "http://platform.example.internal.corp"'
 
 [ "$fails" -eq 0 ] && echo "leak-scan.test: all passed" || { echo "leak-scan.test: $fails failed"; exit 1; }

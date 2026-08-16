@@ -31,8 +31,10 @@ LEAK_RE='[0-9]{12}|chore/|feat/|eu-(central|west|north)-[0-9]|amazonaws|MR !|cha
 # deliberately broad (any realm name is internal), which means it also matches
 # the `realms/example` the sanitiser writes. Allowlisting the placeholder keeps
 # the broad rule intact; weakening the rule instead would let real realm names
-# through. `platform.example` is the chameleon.local replacement.
-ALLOWLIST_SED='s#realms/example##g; s#platform\.example##g'
+# through. Anchoring prevents bare substring strips that would let `realms/example-prod`
+# or similar pass when they should be caught. `platform.example` is defensive
+# (currently no LEAK_RE rule matches it) and kept anchored for future compatibility.
+ALLOWLIST_SED='s#realms/example([^A-Za-z0-9_-]|$)#\1#g; s#platform\.example([^A-Za-z0-9_-]|$)#\1#g'
 
 if [[ $# -eq 0 ]]; then
   echo "usage: leak-scan.sh <dir-or-file> ..." >&2
@@ -53,7 +55,7 @@ while IFS= read -r -d '' f; do
     [[ -n "$line" ]] || continue
     echo "  LEAK: $f: $line"
     hits=$((hits + 1))
-  done < <(sed "$ALLOWLIST_SED" "$f" | grep -nEi "$LEAK_RE" || true)
+  done < <(sed -E "$ALLOWLIST_SED" "$f" | grep -nEi "$LEAK_RE" || true)
 done < <(find "$@" -type f \( "${find_expr[@]}" \) -print0)
 
 if [[ "$hits" -gt 0 ]]; then

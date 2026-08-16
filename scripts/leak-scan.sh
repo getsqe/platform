@@ -27,6 +27,13 @@ SCAN_EXTS=(md mdx json html svg js mjs xml txt yml yaml css)
 
 LEAK_RE='[0-9]{12}|chore/|feat/|eu-(central|west|north)-[0-9]|amazonaws|MR !|chameleon\.local|realms/[A-Za-z0-9_-]+'
 
+# Strip the sanitiser's OWN placeholders before matching. The realms rule is
+# deliberately broad (any realm name is internal), which means it also matches
+# the `realms/example` the sanitiser writes. Allowlisting the placeholder keeps
+# the broad rule intact; weakening the rule instead would let real realm names
+# through. `platform.example` is the chameleon.local replacement.
+ALLOWLIST_SED='s#realms/example##g; s#platform\.example##g'
+
 if [[ $# -eq 0 ]]; then
   echo "usage: leak-scan.sh <dir-or-file> ..." >&2
   exit 2
@@ -46,7 +53,7 @@ while IFS= read -r -d '' f; do
     [[ -n "$line" ]] || continue
     echo "  LEAK: $f: $line"
     hits=$((hits + 1))
-  done < <(grep -nEi "$LEAK_RE" "$f" || true)
+  done < <(sed "$ALLOWLIST_SED" "$f" | grep -nEi "$LEAK_RE" || true)
 done < <(find "$@" -type f \( "${find_expr[@]}" \) -print0)
 
 if [[ "$hits" -gt 0 ]]; then

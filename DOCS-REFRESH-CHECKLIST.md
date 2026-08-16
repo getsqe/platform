@@ -6,6 +6,12 @@ Run on every refresh of platform.getsqe.com/docs.
 - [ ] `bash scripts/sync-docs-from-dp.sh` — aborts on a leak or a missing `openapi.json`
 - [ ] `bash scripts/build-with-docs.sh` — builds both sites, composes, gates
 
+`sync-all.sh platform-docs` (the parent-repo entry point for the first line
+above) is opt-in — but that opt-in applies only to the local content re-sync.
+`build-with-docs.sh` runs on every CI build regardless, so `/docs` is always
+rebuilt and deployed on every deploy; nothing about publishing `/docs` itself
+is optional.
+
 ## Manual — nothing automated covers these
 - [ ] **Re-read `$DP/docs-site/astro.config.mjs`.** Our `docs-site/astro.config.mjs`
       is authored locally and is NOT synced. A new sidebar directory at source is
@@ -18,13 +24,13 @@ Run on every refresh of platform.getsqe.com/docs.
         product name in documentation; only the site *title* is sanitized).
         You will see it as a notebook-kernel label, a `chameleon-svc`
         grantee/service-account name, and a `chameleon.test` mock hostname
-        (an RFC 2606 reserved, non-resolving `.test` TLD — not the internal
-        `chameleon.local` dev host, which IS redacted). These are consistent
-        with the ~32 bare "Chameleon" mentions and 527 `chameleon_*`
-        identifiers already published in the docs body. If a *new* screenshot
-        surfaces `chameleon.local`, a real account id, a real hostname/IP, or
-        a real person's name/email, that is a genuine leak — recapture at
-        `$DP`, don't edit the synced PNG.
+        (an RFC 2606 reserved, non-resolving `.test` TLD — not the real
+        internal dev hostname, which the gate does redact). These are
+        consistent with the ~32 bare "Chameleon" mentions and 527
+        `chameleon_*` identifiers already published in the docs body. If a
+        *new* screenshot surfaces the real internal dev hostname, a real
+        account id, a real hostname/IP, or a real person's name/email, that
+        is a genuine leak — recapture at `$DP`, don't edit the synced PNG.
       - `energy-co` / "Energy Co" is the codebase's standard fictional demo
         tenant (unit tests, docker-compose, quickstart/demos/energy-utility)
         — not a leak.
@@ -69,7 +75,7 @@ table.
 | 23 | service-principal-list.png | Clean. Principal names (e2e-test-sp, probe-scope, probe-scope2, probe-rot, probe-sp-shape); "secret fingerprint" column is a truncated `sha256(secret)` (non-reversible reference per source docstring), not an actual secret. |
 | 24 | sign-in-landing.png | Clean. Product marketing panel ("cloud independent / data platform"), integration badges (Keycloak, Polaris, SQE Flight/Trino), "© 2026 Schuberg Philis" footer — expected, SBP is public-facing per CLAUDE.md. |
 | 25 | sign-in-login.png | Clean. Same screen, no PII, no codename. |
-| 26 | triggers-connect.png | `chameleon.test` mock hostname visible in the curl "Connect" example (appears twice), plus `auth.test/realms/iceberg/...`. **Accepted per spec D3** — `.test` is an RFC 2606 reserved, non-resolving TLD (not the internal `chameleon.local` dev host, which the gate does redact); `chameleon.test` already appears unsanitized and gate-clean in the published text (`start/web-portal.md`, `start/quickstart.md`, `assets/screenshots/manifest.json`). |
+| 26 | triggers-connect.png | `chameleon.test` mock hostname visible in the curl "Connect" example (appears twice), plus an auth URL naming an internal Keycloak realm. **Accepted per spec D3** — `.test` is an RFC 2606 reserved, non-resolving TLD (not the real internal dev hostname, which the gate does redact); `chameleon.test` already appears unsanitized and gate-clean in the published text (`start/web-portal.md`, `start/quickstart.md`, `assets/screenshots/manifest.json`). |
 | 27 | triggers-create.png | Clean. Generic SQL trigger form (daily_sales_rollup), no codename/hostname. |
 | 28 | triggers-list.png | Clean. |
 | 29 | triggers-monitoring.png | Clean. Generic succeeded/failed charts. |

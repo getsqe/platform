@@ -2,7 +2,7 @@
 
 **Own your data. Run anywhere. Zero lock-in.**
 
-> A sovereign, open-source data platform built on Apache Iceberg, Polaris, Trino, and OPA.
+> A sovereign, open-source data platform built on Apache Iceberg, Polaris, Trino, and Apache Ranger.
 > Enterprise-grade security, AI-powered analytics, and total cloud independence.
 
 ---
@@ -31,7 +31,7 @@ A fully integrated data platform built exclusively on open standards.
 | Data catalog | Apache Polaris | None — open REST catalog |
 | Query engine | Trino | None — ANSI SQL, JDBC/ODBC |
 | Identity | Keycloak / OpenID Connect | None — any OIDC provider |
-| Authorization | OPA + Rego policies | None — open policy standard |
+| Authorization | Apache Ranger | None — open policy engine (Polaris authorizer) |
 | Storage | Any S3-compatible backend | None — standard S3 API |
 
 **One platform. Zero proprietary dependencies. Deploy on any cloud or on-premises.**
@@ -50,11 +50,11 @@ graph TB
 
     subgraph "Access & Security"
         KC[Keycloak<br/>OpenID Connect]
-        OPA[OPA<br/>Rego Policies]
+        RN[Apache Ranger<br/>Data-plane policies]
     end
 
     subgraph "Query & Catalog"
-        TR[Trino<br/>ANSI SQL Engine]
+        TR[Trino / SQE<br/>ANSI SQL Engine]
         PO[Apache Polaris<br/>Iceberg REST Catalog]
     end
 
@@ -66,11 +66,10 @@ graph TB
     UP --> KC
     AP --> KC
     BI --> TR
-    KC --> OPA
     TR --> PO
-    TR --> OPA
+    TR --> RN
     PO --> PG
-    PO --> OPA
+    PO --> RN
     TR --> S3
     PO --> S3
 ```
@@ -122,31 +121,30 @@ Your data lives in **standard Apache Iceberg format** on **any S3-compatible sto
 
 ## Enterprise Security
 
-Two-layer security model: **authentication** via Keycloak (OpenID Connect) and **authorization** via OPA (Open Policy Agent).
+Two-layer security model: **authentication** via Keycloak (OpenID Connect) and **authorization** via Apache Ranger (Polaris authorizer / engine path).
 
 ```mermaid
 sequenceDiagram
     participant User
     participant Portal as User Portal
     participant KC as Keycloak (OIDC)
-    participant API as Platform API
-    participant OPA as OPA (Rego)
+    participant API as Platform API (BFF)
+    participant Ranger as Apache Ranger
     participant Polaris as Apache Polaris
-    participant Trino as Trino
+    participant Trino as SQE / Trino
 
     User->>Portal: Login
     Portal->>KC: OIDC Redirect
-    KC-->>Portal: JWT Token (roles, groups)
-    Portal->>API: Request + Bearer Token
-    API->>KC: Validate Token
-    API->>OPA: Check Policy (user, action, resource)
-    OPA-->>API: Allow / Deny
-    API->>Polaris: Catalog Operation
-    Polaris->>OPA: Fine-grained Check
-    OPA-->>Polaris: Allow / Deny
-    API->>Trino: Execute Query
-    Trino->>OPA: Query-level Check
-    OPA-->>Trino: Allow / Deny
+    KC-->>Portal: Session via BFF (tokens server-side)
+    Portal->>API: Request + session cookie
+    API->>KC: Validate / refresh tokens
+    API->>Polaris: Catalog operation (end-user identity)
+    Polaris->>Ranger: Authorize catalog action
+    Ranger-->>Polaris: Allow / Deny
+    API->>Trino: Execute query (end-user identity)
+    Trino->>Polaris: Resolve tables
+    Polaris->>Ranger: Authorize data access
+    Ranger-->>Polaris: Allow / Deny
     Trino-->>Portal: Results
 ```
 
@@ -155,11 +153,11 @@ sequenceDiagram
 - SSO, MFA, user federation, social login
 - Group and role management with automatic token claims
 
-**Authorization (OPA)**
-- Centralized Rego policies — one policy engine for the entire platform
-- Polaris-level: control access to catalogs, namespaces, and tables
-- Trino-level: control query execution, table visibility, row filtering
-- Policy-as-code: version, review, and audit every access rule
+**Authorization (Apache Ranger)**
+- Single data-plane policy store for catalogs, tables, column masks, and row filters
+- Polaris embeds the Ranger authorizer — enforcement is per end-user identity
+- Grants dual-write from the platform Access API into Ranger policies
+- Audit of allow/deny decisions for SIEM and access review
 
 ---
 
@@ -180,7 +178,7 @@ Trino provides the **ANSI SQL query engine** with standard JDBC/ODBC connectivit
 **Why Trino:**
 - Massively parallel SQL engine — scales from laptop to 1000-node clusters
 - Reads directly from Iceberg tables via Polaris catalog
-- OPA integration for query-level authorization
+- Ranger integration for query-level and catalog authorization
 - No data copying — queries run against data in place
 
 ---
@@ -247,7 +245,7 @@ A dedicated management interface for platform administrators.
 - Assign catalog-level roles and permissions
 
 **Policy Editor**
-- Create and manage OPA authorization policies
+- Create and manage Ranger authorization policies (Access / Grants UI)
 - Subject-based rules: by role, group, or individual user
 - Resource-based scoping: catalog, namespace, table (with wildcard support)
 - Priority-based conflict resolution with allow/deny effects
@@ -306,7 +304,7 @@ graph TB
             PO[Polaris<br/>Helm Chart]
             TR[Trino<br/>Helm Chart]
             KC[Keycloak<br/>Helm Chart]
-            OPA_D[OPA<br/>Deployment]
+            RN[Ranger<br/>Deployment]
             API[Platform API<br/>Deployment]
             FE[User Portal<br/>Deployment]
             ADMIN[Admin Portal<br/>Deployment]
@@ -335,7 +333,7 @@ graph TB
 | Apache Polaris | Helm chart (v1.4.0) | Available |
 | Trino | Helm chart | Available |
 | Keycloak | Helm chart | Available |
-| OPA | Helm / sidecar | Available |
+| Apache Ranger | Helm / container | Available |
 | Platform API | Docker image | Available |
 | User Portal | Docker image | Available |
 | Admin Portal | Docker image | Available |
@@ -356,7 +354,7 @@ Every layer of the platform is built on a widely adopted, vendor-neutral standar
 | Data catalog | Iceberg REST Catalog | Apache Software Foundation |
 | Query language | ANSI SQL | ISO/IEC |
 | Authentication | OpenID Connect (OIDC) | OpenID Foundation |
-| Authorization | OPA / Rego | CNCF (Cloud Native Computing Foundation) |
+| Authorization | Apache Ranger | Apache Software Foundation |
 | Storage API | S3 API | De facto standard |
 | Data files | Apache Parquet | Apache Software Foundation |
 | Deployment | Kubernetes + Helm | CNCF |
@@ -370,7 +368,7 @@ Every layer of the platform is built on a widely adopted, vendor-neutral standar
 | Feature | Description | Timeline |
 |---|---|---|
 | **Catalog federation** | Connect Snowflake, Databricks, AWS Glue catalogs | Planned |
-| **Column/row-level security** | Fine-grained OPA policies for column masking and row filtering | Planned |
+| **Column/row-level security** | Ranger column masks and row filters (shared with Spark/SQE) | Available |
 | **Streaming ingestion** | Apache Flink for real-time data pipelines | Planned |
 | **Cloud LLM providers** | OpenAI, Azure OpenAI, OpenRouter for Text-to-SQL | Planned |
 | **CSV import/export** | Upload CSV to Iceberg tables, download query results | Planned |
@@ -389,7 +387,7 @@ Every layer of the platform is built on a widely adopted, vendor-neutral standar
 | **Data format** | Apache Iceberg (open) | Proprietary internal format |
 | **Data location** | Any S3-compatible storage, any cloud, on-prem | Vendor's cloud only |
 | **Identity provider** | Any OIDC provider (Keycloak, Okta, Azure AD) | Vendor-specific IAM |
-| **Authorization** | OPA — policy-as-code, auditable, portable | Built-in RBAC, non-portable |
+| **Authorization** | Apache Ranger — policies, masks, filters; auditable | Built-in RBAC, non-portable |
 | **Query engine** | Trino — standard JDBC/ODBC | Proprietary, vendor-specific drivers |
 | **AI analytics** | Local or cloud LLM — your choice | Vendor's AI service |
 | **Deployment** | Kubernetes, Docker, on-prem, any cloud | Vendor's managed service |

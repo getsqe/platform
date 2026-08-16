@@ -1,0 +1,23 @@
+{
+  "name": "getsqe-platform-docs",
+  "type": "module",
+  "private": true,
+  "packageManager": "pnpm@10.30.2",
+  "scripts": {
+    "build": "astro build",
+    "dev": "astro dev",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.41.0",
+    "astro": "^7.0.2",
+    "starlight-openapi": "^0.26.0"
+  },
+  "pnpm": {
+    "ignoredOptionalDependencies": [
+      "sharp",
+      "@img/sharp-*",
+      "@img/sharp-libvips-*"
+    ]
+  }
+}

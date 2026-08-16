@@ -1,0 +1,61 @@
+{
+  "_about": [
+    "A tutorial is COMPOSED of use-cases that a capture run executed. Each section",
+    "names one, and the generator splices in that use-case's real steps and the",
+    "screenshots the run took — so a tutorial cannot describe a flow the platform no",
+    "longer performs. Naming a use-case that did not run fails the docs build.",
+    "",
+    "What lives here is the connective prose: why a step matters, what to look for,",
+    "what to do when it goes wrong. That is the part a reader needs and a test",
+    "cannot supply."
+  ],
+  "id": "data-engineer",
+  "order": 2,
+  "title": "Build your first pipeline",
+  "audience": "Data engineer",
+  "time": "About 30 minutes",
+  "outcome": "A dbt project building tested, documented tables in your own catalog — with lineage you can read, a trigger that rebuilds them when new data lands, and a colleague able to query the result.",
+  "intro": "This is the whole path, in order: find what exists, query it, build models from a git repository, prove they are correct, make them rebuild on their own, and hand access to someone else. Every screenshot below came from a run that actually performed the step.\n\nIf you only read one thing first: a **workspace** owns exactly one **catalog**, and everything you build lands in it. That is the boundary that keeps your tables yours.",
+  "prerequisites": [
+    "A workspace, and membership of its admin group. Ask a platform administrator if you do not have one — `manage-workspace` shows what they do.",
+    "A git repository containing a dbt project. The tutorial uses a small one with seeds, staging models and gold models.",
+    "Nothing installed locally. Everything here happens in the browser; the CLI and API equivalents are linked at each step."
+  ],
+  "sections": [
+    {
+      "heading": "Sign in",
+      "useCase": "sign-in",
+      "prose": "The platform authenticates through Keycloak, and the backend keeps your tokens server-side — the browser only ever holds a session cookie. Nothing you do later depends on a token you have to manage."
+    },
+    {
+      "heading": "See what already exists",
+      "useCase": "browse-catalog",
+      "prose": "Start in the catalog rather than in your editor. A table here is an Iceberg table that every engine on the platform reads the same way, so what you find is what dbt, SQL and Spark will all see.\n\nLook at the table's schema before you model it. Column names and types here are the contract your models will depend on."
+    },
+    {
+      "heading": "Ask a question in SQL",
+      "useCase": "run-query",
+      "prose": "Query before you build. A query runs as **you**, so what you can see here is exactly what your grants allow — if a table looks empty, that is an access answer, not an empty table.\n\nThis is also the fastest way to check an assumption before writing a model that encodes it."
+    },
+    {
+      "heading": "Build models with dbt",
+      "useCase": "dbt-lifecycle",
+      "prose": "This is the heart of it. The platform clones your repository, runs dbt against your workspace's catalog **as you**, and records what each run produced.\n\nTwo things worth doing in order: run `seed` before `run` the first time, so the source data exists; and read the lineage graph after the run rather than before, because that is where the shape of what you built becomes obvious. Then run the tests — a model that builds is not the same as a model that is right."
+    },
+    {
+      "heading": "Make it rebuild on its own",
+      "useCase": "triggers",
+      "prose": "A pipeline you have to remember to run is a pipeline that will be stale. A trigger turns an outside event — a file landing in S3, or an authenticated HTTP call from whatever produces your data — into the same work you just did by hand.\n\nStart with `Test fire`. It dispatches through the real path and shows up in Monitoring like any other firing, so you can prove the wiring before anything depends on it."
+    },
+    {
+      "heading": "Give your team access",
+      "useCase": "grant-access",
+      "prose": "Tables you cannot share are not finished. Authorization is decided by Apache Ranger for the **end user**, not for the engine, so a grant you make here applies whether your colleague uses SQL, Spark or a notebook.\n\nGrant to a group rather than a person where you can: it survives people joining and leaving."
+    }
+  ],
+  "nextSteps": [
+    "Put the project on a schedule as well as a trigger, so it rebuilds even when nothing fires.",
+    "Add a data contract to the tables other teams depend on, so a breaking change is caught before it ships.",
+    "Read the lineage from the table side rather than the project side — it spans engines, not just dbt."
+  ]
+}

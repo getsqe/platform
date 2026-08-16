@@ -1,0 +1,62 @@
+{
+  "id": "evaluating-the-platform",
+  "order": 1,
+  "title": "What this platform is, in plain language",
+  "audience": "Anyone deciding whether to use it",
+  "time": "About 10 minutes, no technical background needed",
+  "outcome": "A clear enough picture to decide whether this platform fits your organisation — what it does, what it replaces, and what it asks of you in return.",
+  "intro": "Most data platform documentation starts with architecture. This page does not. It shows you the five things people actually do with this platform, one screen each, and says plainly what each one is for.\n\nThe one idea worth taking away: **your data stays in your own storage, and everything else is built around that**. The platform does not hold your data hostage in a proprietary format. Tables are stored in an open format called Apache Iceberg, in object storage you own, and several different query engines can read the same table without copying it.",
+  "prerequisites": [
+    "Nothing. If you can read a spreadsheet, you can read this page.",
+    "If a term is unfamiliar, it is probably a name for something ordinary: a *catalog* is a list of what data exists, a *namespace* is a folder inside it, and a *table* is a table."
+  ],
+  "sections": [
+    {
+      "heading": "People sign in with your existing accounts",
+      "useCase": "sign-in",
+      "steps": [
+        0
+      ],
+      "prose": "There is no separate password to manage. The platform uses your organisation's existing sign-in, so people arrive with the identity they already have, and leaving the organisation removes their access everywhere at once.\n\n**What this replaces:** a per-tool user list that somebody has to remember to clean up."
+    },
+    {
+      "heading": "You can see what data exists",
+      "useCase": "browse-catalog",
+      "steps": [
+        0,
+        3
+      ],
+      "prose": "The catalog is the map: what tables exist, what is in them, who owns them. Without one, the answer to \"do we already have this data?\" is somebody's memory.\n\n**What this replaces:** a spreadsheet of table names, and the meeting where you find out two teams built the same thing twice."
+    },
+    {
+      "heading": "People ask questions in SQL",
+      "useCase": "run-query",
+      "steps": [
+        1
+      ],
+      "prose": "Anyone with access can query the data directly, in the browser, in the standard query language that analysts already know. Results respect who is asking — someone only ever sees what they are permitted to see.\n\n**What this replaces:** waiting for someone else to run a query for you, or a copy of the data extracted into a spreadsheet that is out of date by the afternoon."
+    },
+    {
+      "heading": "Data is built by code that is reviewed and tested",
+      "useCase": "dbt-lifecycle",
+      "steps": [
+        4,
+        5
+      ],
+      "prose": "The tables people rely on are produced by code kept in version control, built on a schedule, and **tested** — the platform records whether each check passed. The picture here shows the path data took from raw file to finished table, and a green mark against each step that passed its tests.\n\n**What this replaces:** a chain of manual steps nobody has written down, and the sinking question \"is this number right?\" with no way to answer it."
+    },
+    {
+      "heading": "Access is granted deliberately, and recorded",
+      "useCase": "grant-access",
+      "steps": [
+        0
+      ],
+      "prose": "Who can see what is decided in one place and applies everywhere, whichever tool people use to reach the data. Every grant is recorded, which is what makes an audit answerable rather than an archaeology project.\n\n**What this replaces:** access that was granted verbally three years ago and never reviewed."
+    }
+  ],
+  "nextSteps": [
+    "If you are technical and want to try it: the data-engineer tutorial builds a working pipeline in about thirty minutes.",
+    "If you are responsible for running it: the platform-engineer tutorial sets up a workspace for a team.",
+    "If you are comparing platforms: the thing to compare is not the query editor, which every vendor has. It is whether your data stays in an open format in storage you control, and whether access is governed in one place or in five."
+  ]
+}

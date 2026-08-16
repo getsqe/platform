@@ -1,0 +1,4 @@
+# /docs is published but unlinked and not indexed. This is obscurity, not
+# access control — the pages are served publicly to anyone with the URL.
+User-agent: *
+Disallow: /docs/

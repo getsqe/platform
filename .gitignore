@@ -9,3 +9,8 @@ node_modules/
 # env
 .env
 .env.production
+
+# docs-site build output (source is synced/committed; built tree is not)
+docs-site/node_modules/
+docs-site/dist/
+docs-site/.astro/

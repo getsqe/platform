@@ -13,7 +13,7 @@ const features = [
   { title: 'dbt Workspace', body: 'Browser-based IDE: file editor, git operations, build/test/run, and dbt model lineage visualization.' },
   { title: 'AI Flows', body: 'Context-aware assistant powered by a local LLM with MCP tool integration. Schema-aware natural-language SQL.' },
   { title: 'Data Contracts', body: 'Visual ODCS v3.1.0 editor with quality checks, import from catalog, and dbt export.' },
-  { title: 'Fine-grained RBAC', body: 'Table-level access control via OPA Rego policies, identity from Keycloak. service_admin → table_reader.' },
+  { title: 'Fine-grained RBAC', body: 'Table, column, and row-level access control via Apache Ranger policies, identity from Keycloak. service_admin → table_reader.' },
   { title: 'Observability', body: 'OpenTelemetry traces, OCSF audit logging, Jaeger UI — see every query and access decision.' },
   { title: 'Column-level lineage', body: 'dbt model lineage with auto-layout, column-level tracking, and search across the warehouse.' },
 ];
@@ -25,7 +25,7 @@ const stackRows = [
   { label: 'Data catalog', cells: [{ t: 'Apache Polaris' }, { t: 'none — open REST catalog', tone: 'yes' }] },
   { label: 'Query engine', cells: [{ t: 'SQE (Flight SQL) · Trino · Spark Connect', tone: 'emph' }, { t: 'none — ANSI SQL, JDBC/ODBC', tone: 'yes' }] },
   { label: 'Identity', cells: [{ t: 'Keycloak / OpenID Connect' }, { t: 'none — any OIDC provider', tone: 'yes' }] },
-  { label: 'Authorization', cells: [{ t: 'OPA + Rego policies' }, { t: 'none — open policy standard', tone: 'yes' }] },
+  { label: 'Authorization', cells: [{ t: 'Apache Ranger' }, { t: 'none — open policy engine', tone: 'yes' }] },
   { label: 'Storage', cells: [{ t: 'Any S3-compatible backend' }, { t: 'none — standard S3 API', tone: 'yes' }] },
 ];
 
@@ -36,7 +36,7 @@ const cmpRows = [
   { label: 'Data format', cells: [{ t: 'Apache Iceberg', tone: 'emph' }, { t: 'proprietary internal' }] },
   { label: 'Data location', cells: [{ t: 'any cloud / on-prem', tone: 'yes' }, { t: 'vendor cloud only', tone: 'no' }] },
   { label: 'Identity provider', cells: [{ t: 'any OIDC', tone: 'yes' }, { t: 'vendor IAM only' }] },
-  { label: 'Authorization', cells: [{ t: 'OPA — policy-as-code', tone: 'emph' }, { t: 'built-in, non-portable' }] },
+  { label: 'Authorization', cells: [{ t: 'Apache Ranger — policies, masks, filters', tone: 'emph' }, { t: 'built-in, non-portable' }] },
   { label: 'Query engine', cells: [{ t: 'SQE / Trino — standard SQL', tone: 'yes' }, { t: 'proprietary drivers' }] },
   { label: 'AI analytics', cells: [{ t: 'local or cloud LLM — your choice', tone: 'yes' }, { t: "vendor's AI service" }] },
   { label: 'Exit strategy', cells: [{ t: 'walk away — data is Iceberg/Parquet', tone: 'yes' }, { t: 'multi-year migration', tone: 'no' }] },
@@ -48,7 +48,7 @@ const saasMore = [
   'Operated end-to-end by Schuberg Philis: provisioning, upgrades, patching, backups, monitoring.',
   '24×7 mission-critical operations with an agreed SLA.',
   'Runs in an EU/sovereign region of your choice; your data stays in-region.',
-  'Per-query identity (Keycloak OIDC) + OPA policies — your IdP, your rules.',
+  'Per-query identity (Keycloak OIDC) + Apache Ranger policies — your IdP, your rules.',
   'Exit anytime: data stays in open Apache Iceberg/Parquet, catalog in Polaris.',
 ];
 const ownMore = [
@@ -61,7 +61,6 @@ const ownMore = [
 // Roadmap.
 const roadmap = [
   { feature: 'Catalog federation', desc: 'Connect Snowflake, Databricks, AWS Glue catalogs — query across platforms with one SQL interface.' },
-  { feature: 'Column / row-level security', desc: 'Fine-grained OPA policies for column masking and row filtering.' },
   { feature: 'Streaming ingestion', desc: 'Apache Flink for real-time data pipelines.' },
   { feature: 'CSV import / export', desc: 'Upload CSV to Iceberg tables; download query results as CSV/Parquet.' },
   { feature: 'Okta integration', desc: 'Direct Okta OIDC support alongside Keycloak.' },
@@ -155,19 +154,19 @@ const roadmap = [
   <!-- SECURITY -->
   <section class="section" id="security">
     <div class="container">
-      <SectionHeading eyebrow="Enterprise security" title="Two layers, both open: Keycloak + OPA." />
+      <SectionHeading eyebrow="Enterprise security" title="Two layers, both open: Keycloak + Apache Ranger." />
       <div class="how-grid">
         <div>
           <h3 class="section-marker">Authentication — Keycloak (OIDC)</h3>
-          <p>OpenID Connect standard — swap for Okta, Azure AD, or any OIDC provider. SSO, MFA, user federation. BFF-style auth: no tokens exposed to the browser. Group and role claims minted into every token.</p>
+          <p>OpenID Connect standard — swap for Okta, Azure AD, or any OIDC provider. SSO, MFA, user federation. BFF-style auth: tokens stay server-side, never exposed to the browser. Group and role claims minted into every token.</p>
         </div>
         <div>
-          <h3 class="section-marker">Authorization — OPA (Rego)</h3>
-          <p>One policy engine for the whole platform. Catalog-level (catalogs, namespaces, tables), query-level (execution, visibility, row filtering). Policy-as-code: version, review, and audit every access rule. Roles from service_admin to table_reader.</p>
+          <h3 class="section-marker">Authorization — Apache Ranger</h3>
+          <p>A single data-plane policy store for catalogs, tables, column masks, and row filters. Polaris embeds the Ranger authorizer, so enforcement happens per end-user identity — the same policy binds whether the query arrives via SQE, Trino, or Spark. Every allow/deny decision is audited for SIEM and access review.</p>
         </div>
       </div>
       <h3 class="proof-sub section-marker">Catalog grants — on top of Apache Polaris</h3>
-      <p class="lead"><code>GRANT</code> and <code>REVOKE</code> privileges on catalogs, namespaces, and tables using Polaris's native RBAC security model — then layer OPA policies on top for row- and column-level rules. Standard, portable grants; no vendor-specific access model to migrate away from.</p>
+      <p class="lead"><code>GRANT</code> and <code>REVOKE</code> privileges on catalogs, namespaces, and tables using Polaris's native RBAC security model; the Access API dual-writes those grants into Ranger policies, which add row- and column-level rules. Standard, portable grants; no vendor-specific access model to migrate away from.</p>
     </div>
   </section>
 
@@ -187,7 +186,7 @@ const roadmap = [
         </div>
         <div>
           <h3 class="section-marker">Kubernetes + Helm, GitOps-ready</h3>
-          <p>Production deploys via Helm charts on any conformant Kubernetes: Polaris, the query engine (SQE or Trino), Spark Connect, Keycloak, OPA, and the portals — with horizontal scaling and Argo CD GitOps delivery. Storage is any S3-compatible backend.</p>
+          <p>Production deploys via Helm charts on any conformant Kubernetes: Polaris, the query engine (SQE or Trino), Spark Connect, Keycloak, Apache Ranger, and the portals — with horizontal scaling and Argo CD GitOps delivery. Storage is any S3-compatible backend.</p>
         </div>
       </div>
       <p class="ph-note">Beta: public Helm charts and a hosted demo are on the way.</p>
@@ -230,7 +229,7 @@ const roadmap = [
           <ul class="plan__list">
             <li>Fully hosted &amp; operated by Schuberg Philis</li>
             <li>EU / sovereign regions — data stays in-region</li>
-            <li>Iceberg · Polaris · SQE/Trino · Spark · OPA · Keycloak</li>
+            <li>Iceberg · Polaris · SQE/Trino · Spark · Ranger · Keycloak</li>
             <li>Usage-based — by data volume &amp; workloads</li>
           </ul>
           <details class="plan__more">
@@ -329,10 +328,10 @@ const roadmap = [
     <div class="container narrow">
       <SectionHeading eyebrow="About" title="Sovereignty is an architecture, not a checkbox." />
       <p>The Cloud Independent Data Platform exists because most "data sovereignty" is a setting in someone else's console. Real sovereignty means you can pick up your data and your access policies and walk to a different cloud — or to your own datacenter — without a multi-year migration.</p>
-      <p>So every layer is a widely adopted open standard governed by a neutral body: Apache Iceberg and Polaris for tables and catalog, ANSI SQL via SQE or Trino for query, OpenID Connect for identity, OPA/Rego for authorization, the S3 API for storage, Kubernetes + Helm for deployment. No single vendor controls any component of the stack.</p>
+      <p>So every layer is a widely adopted open standard governed by a neutral body: Apache Iceberg and Polaris for tables and catalog, ANSI SQL via SQE or Trino for query, OpenID Connect for identity, Apache Ranger for authorization, the S3 API for storage, Kubernetes + Helm for deployment. No single vendor controls any component of the stack.</p>
       <p>That makes regulations like GDPR, DORA, and NIS2 tractable: data location is your choice, access decisions are policy-as-code you can audit, and there is no proprietary format holding you hostage.</p>
       <h3 class="section-marker about__h">Built by Schuberg Philis</h3>
-      <p>The platform is designed and built by <a href="https://schubergphilis.com" target="_blank" rel="noopener noreferrer">Schuberg Philis</a>, integrating proven open-source components — Polaris, Keycloak, OPA, Trino, the Sovereign Query Engine — into one secure, operable whole. It pairs with <a href="https://getsqe.com">SQE</a>, the sovereign query engine that powers the platform's <code>sqe</code> deployment mode.</p>
+      <p>The platform is designed and built by <a href="https://schubergphilis.com" target="_blank" rel="noopener noreferrer">Schuberg Philis</a>, integrating proven open-source components — Polaris, Keycloak, Apache Ranger, Trino, the Sovereign Query Engine — into one secure, operable whole. It pairs with <a href="https://getsqe.com">SQE</a>, the sovereign query engine that powers the platform's <code>sqe</code> deployment mode.</p>
       <p class="ph-note">Beta: this site tells the story; product screenshots, a hosted demo, and public images are on the way.</p>
     </div>
   </section>

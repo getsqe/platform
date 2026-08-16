@@ -40,6 +40,11 @@ from airflow.providers.chameleon.operators.chameleon import ChameleonRunNowOpera
 | Argument | Type | Default | Templated |
 |---|---|---|---|
 | `schedule_id` | `str` | required | yes |
+| `chameleon_conn_id` | `str` | `'chameleon_default'` | yes |
+| `workspace` | `str \| None` | `None` | yes |
+| `polling_period_seconds` | `int` | `30` |  |
+| `wait_for_termination` | `bool` | `True` |  |
+| `deferrable` | `bool` | `False` |  |
 
 ### `ChameleonDbtRunOperator`
 
@@ -55,6 +60,11 @@ from airflow.providers.chameleon.operators.chameleon import ChameleonDbtRunOpera
 | `action` | `str` | `'run'` |  |
 | `models` | `list[str] \| None` | `None` | yes |
 | `full_refresh` | `bool` | `False` |  |
+| `chameleon_conn_id` | `str` | `'chameleon_default'` | yes |
+| `workspace` | `str \| None` | `None` | yes |
+| `polling_period_seconds` | `int` | `30` |  |
+| `wait_for_termination` | `bool` | `True` |  |
+| `deferrable` | `bool` | `False` |  |
 
 ### `ChameleonQualityRunOperator`
 
@@ -68,6 +78,11 @@ from airflow.providers.chameleon.operators.chameleon import ChameleonQualityRunO
 |---|---|---|---|
 | `contract_id` | `str` | required | yes |
 | `scope` | `str` | `'full'` |  |
+| `chameleon_conn_id` | `str` | `'chameleon_default'` | yes |
+| `workspace` | `str \| None` | `None` | yes |
+| `polling_period_seconds` | `int` | `30` |  |
+| `wait_for_termination` | `bool` | `True` |  |
+| `deferrable` | `bool` | `False` |  |
 
 ### `ChameleonNotebookOperator`
 
@@ -83,6 +98,11 @@ from airflow.providers.chameleon.operators.chameleon import ChameleonNotebookOpe
 | `notebook_path` | `str` | required | yes |
 | `parameters` | `dict \| None` | `None` | yes |
 | `output_path` | `str \| None` | `None` | yes |
+| `chameleon_conn_id` | `str` | `'chameleon_default'` | yes |
+| `workspace` | `str \| None` | `None` | yes |
+| `polling_period_seconds` | `int` | `30` |  |
+| `wait_for_termination` | `bool` | `True` |  |
+| `deferrable` | `bool` | `False` |  |
 
 ### `ChameleonCreateScheduleOperator`
 
@@ -113,6 +133,8 @@ from airflow.providers.chameleon.operators.chameleon_project import ChameleonPro
 | `visibility` | `str` | `'shared'` |  |
 | `connection_id` | `str \| None` | `None` | yes |
 | `dbt_config` | `dict \| None` | `None` |  |
+| `chameleon_conn_id` | `str` | `'chameleon_default'` | yes |
+| `workspace` | `str \| None` | `None` | yes |
 
 ### `ChameleonProjectUpdateOperator`
 
@@ -126,6 +148,8 @@ from airflow.providers.chameleon.operators.chameleon_project import ChameleonPro
 |---|---|---|---|
 | `project_id` | `str` | required | yes |
 | `fields` | `dict` | required |  |
+| `chameleon_conn_id` | `str` | `'chameleon_default'` | yes |
+| `workspace` | `str \| None` | `None` | yes |
 
 ### `ChameleonProjectDeleteOperator`
 
@@ -138,6 +162,8 @@ from airflow.providers.chameleon.operators.chameleon_project import ChameleonPro
 | Argument | Type | Default | Templated |
 |---|---|---|---|
 | `project_id` | `str` | required | yes |
+| `chameleon_conn_id` | `str` | `'chameleon_default'` | yes |
+| `workspace` | `str \| None` | `None` | yes |
 
 ### `ChameleonProjectFilePutOperator`
 
@@ -152,6 +178,8 @@ from airflow.providers.chameleon.operators.chameleon_project import ChameleonPro
 | `project_id` | `str` | required | yes |
 | `path` | `str` | required | yes |
 | `content` | `str` | required | yes |
+| `chameleon_conn_id` | `str` | `'chameleon_default'` | yes |
+| `workspace` | `str \| None` | `None` | yes |
 
 ### `ChameleonProjectFileGetOperator`
 
@@ -165,6 +193,8 @@ from airflow.providers.chameleon.operators.chameleon_project import ChameleonPro
 |---|---|---|---|
 | `project_id` | `str` | required | yes |
 | `path` | `str` | required | yes |
+| `chameleon_conn_id` | `str` | `'chameleon_default'` | yes |
+| `workspace` | `str \| None` | `None` | yes |
 
 ### `ChameleonProjectFileDeleteOperator`
 
@@ -178,6 +208,8 @@ from airflow.providers.chameleon.operators.chameleon_project import ChameleonPro
 |---|---|---|---|
 | `project_id` | `str` | required | yes |
 | `path` | `str` | required | yes |
+| `chameleon_conn_id` | `str` | `'chameleon_default'` | yes |
+| `workspace` | `str \| None` | `None` | yes |
 
 ### `ChameleonSqlOperator`
 
@@ -250,6 +282,9 @@ from airflow.providers.chameleon.sensors.chameleon_sql import ChameleonPartition
 | `engine` | `str` | `'trino'` |  |
 | `chameleon_conn_id` | `str` | `'chameleon_default'` | yes |
 | `workspace` | `str \| None` | `None` | yes |
+| `sql` | `str` | required | yes |
+| `deferrable` | `bool` | `False` |  |
+| `polling_period_seconds` | `int` | `30` |  |
 
 ## Hooks
 
@@ -281,7 +316,13 @@ BFF resource methods + a normalized run-status adapter.
 from airflow.providers.chameleon.hooks.chameleon import ChameleonHook
 ```
 
-_No constructor arguments._
+| Argument | Type | Default | Templated |
+|---|---|---|---|
+| `chameleon_conn_id` | `str` | `'chameleon_default'` |  |
+| `workspace` | `str \| None` | `None` |  |
+| `timeout_seconds` | `int` | `180` |  |
+| `retry_limit` | `int` | `3` |  |
+| `retry_delay` | `float` | `1.0` |  |
 
 ### `ChameleonBaseHook`
 

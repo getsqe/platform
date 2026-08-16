@@ -73,6 +73,17 @@ echo "→ sanitizing synced copies (source untouched)"
 # Walks BOTH src and public: public/ is rsynced too (e.g. public/scripts/*.js)
 # and must not be a sanitizer/gate blind spot just because it isn't "docs
 # content" in the narrow sense.
+#
+# The landing-page frontmatter `title:` rule below is deliberately scoped to
+# ONE anchored line, not a blanket "Chameleon" replace. Per spec D3: "sanitize
+# the site title to 'Cloud Independent Data Platform'... documentation uses
+# the real names." The Starlight page-level `title:` frontmatter on
+# content/docs/index.mdx renders as the <h1> hero, og:title and the
+# browser-tab prefix — the first thing a visitor sees, functionally the site
+# title — so it's in scope. Bare "Chameleon" mentions in docs body prose are
+# NOT in scope and must stay untouched; anchoring to `^title: ...$` guarantees
+# that (it cannot match mid-sentence prose or a differently-worded heading).
+# Do not broaden this to a bare `Chameleon` substitution.
 while IFS= read -r -d '' f; do
   sed -i '' -E \
     -e 's#chameleon\.local#platform.example#g' \
@@ -84,6 +95,7 @@ while IFS= read -r -d '' f; do
     -e 's#https://schubergphilis\.com#https://platform.example#g' \
     -e "s#([Rr]ealm[^']{0,60})'iceberg'#\1'example'#gI" \
     -e "s#([Rr]ealm[^\"]{0,60})\"iceberg\"#\1\"example\"#gI" \
+    -e 's#^title: Chameleon Data Platform$#title: Cloud Independent Data Platform#' \
     "$f"
 done < <(find "$DEST/src" "$DEST/public" -type f \( \
   -name '*.md' -o -name '*.mdx' -o -name '*.json' -o -name '*.html' \

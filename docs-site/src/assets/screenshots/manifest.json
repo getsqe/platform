@@ -1,0 +1,228 @@
+{
+  "baseUrl": "https://chameleon.test",
+  "gitCommit": "8154b3dc6",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "colorScheme": "dark",
+  "usecases": [
+    {
+      "id": "sign-in",
+      "title": "Sign in to the portal",
+      "intent": "Every session starts here. The portal authenticates through Keycloak, and the backend keeps the resulting tokens server-side — the browser only ever holds a session cookie. Where it is enabled, a direct password form is also offered for local development.",
+      "persona": "admin",
+      "steps": [
+        {
+          "action": "Open the portal and review the sign-in options",
+          "image": "sign-in-login.png"
+        },
+        {
+          "action": "Sign in, landing on the administration overview",
+          "image": "sign-in-landing.png"
+        }
+      ]
+    },
+    {
+      "id": "browse-catalog",
+      "title": "Browse the data catalog",
+      "intent": "The catalog is the map of what exists. A catalog holds namespaces, a namespace holds tables, and each table exposes the Iceberg schema and metadata that every engine on the platform reads — one definition rather than a copy per tool.",
+      "persona": "analyst",
+      "steps": [
+        {
+          "action": "Open the catalog explorer",
+          "image": "browse-catalog-overview.png"
+        },
+        {
+          "action": "Open the catalog to see its properties and contents",
+          "image": "browse-catalog-catalog.png"
+        },
+        {
+          "action": "Open a namespace to list its tables",
+          "image": "browse-catalog-namespace.png"
+        },
+        {
+          "action": "Open a table to read its Iceberg metadata",
+          "image": "browse-catalog-table.png"
+        }
+      ]
+    },
+    {
+      "id": "run-query",
+      "title": "Run a query",
+      "intent": "The query editor runs SQL against the lakehouse through the platform, so every statement is authorized as the signed-in user rather than a shared service identity. The same query is therefore subject to the same grants whichever engine executes it.",
+      "persona": "analyst",
+      "steps": [
+        {
+          "action": "Open the query editor",
+          "image": "run-query-editor.png"
+        },
+        {
+          "action": "Run a SELECT and read the results",
+          "image": "run-query-results.png"
+        }
+      ]
+    },
+    {
+      "id": "notebook-analysis",
+      "title": "Explore data in a notebook",
+      "intent": "A notebook is for the work that is not a single query: shaping a dataset, plotting it, training something and keeping a record of what you tried. The platform runs one per workspace with a kernel of its own, so the code runs next to the data rather than on a laptop with a copy of it.",
+      "persona": "analyst",
+      "steps": [
+        {
+          "action": "Open Notebooks for the workspace",
+          "image": "notebook-analysis-list.png"
+        },
+        {
+          "action": "Start one from the ML experiment template, which arrives with tracking set up",
+          "image": "notebook-analysis-create.png"
+        },
+        {
+          "action": "The notebook opens with its kernel running, ready to execute",
+          "image": "notebook-analysis-editor.png"
+        }
+      ]
+    },
+    {
+      "id": "grant-access",
+      "title": "Grant access to data",
+      "intent": "Data access is decided by Apache Ranger, and granted per securable — a catalog, a namespace or a single table. Grants apply to the end user who runs the query, whichever engine they use, so the same permission holds across the platform.",
+      "persona": "admin",
+      "steps": [
+        {
+          "action": "Open Access Control to review existing grants",
+          "image": "grant-access-list.png"
+        },
+        {
+          "action": "Open the Grant Access dialog and choose a privilege and securable",
+          "image": "grant-access-dialog.png"
+        }
+      ]
+    },
+    {
+      "id": "manage-workspace",
+      "title": "Manage workspaces",
+      "intent": "A workspace is the unit of tenancy: it owns a catalog, its own storage buckets, and the Keycloak groups whose members administer or use it. One catalog belongs to exactly one workspace, which is what keeps tenants separated in the data plane.",
+      "persona": "admin",
+      "steps": [
+        {
+          "action": "Open the workspace administration page",
+          "image": "manage-workspace-list.png"
+        }
+      ]
+    },
+    {
+      "id": "service-principal",
+      "title": "Create a service principal",
+      "intent": "Machines get identities too. A service principal is a confidential OIDC client in Keycloak, so an external engine or pipeline authenticates as itself and is authorized by Ranger like any user — least privilege and read-only by default, rather than sharing a human account or a static key.",
+      "persona": "admin",
+      "steps": [
+        {
+          "action": "Open the service principals page",
+          "image": "service-principal-list.png"
+        }
+      ]
+    },
+    {
+      "id": "triggers",
+      "title": "Fire a task from an external event",
+      "intent": "A trigger turns an outside event into platform work: an authenticated HTTP POST — or a file landing in S3, via EventBridge and SQS — enqueues a task such as a SQL statement or a file ingest. Each trigger belongs to one workspace, carries its own authentication, and records every firing so a failure shows the reason verbatim rather than an opaque error.",
+      "persona": "workspace-admin",
+      "steps": [
+        {
+          "action": "Open the Triggers page for the workspace"
+        },
+        {
+          "action": "Describe the trigger: a name, an HTTP source, and how callers authenticate",
+          "image": "triggers-create.png"
+        },
+        {
+          "action": "Create it, and see it listed for the workspace",
+          "image": "triggers-list.png"
+        },
+        {
+          "action": "Read the connection details a caller needs: the events URL and a worked example",
+          "image": "triggers-connect.png"
+        },
+        {
+          "action": "Send a test event, so the trigger fires through the real dispatch path"
+        },
+        {
+          "action": "Check the Monitoring tab: how many actions each trigger dispatched",
+          "image": "triggers-monitoring.png"
+        },
+        {
+          "action": "Read the recent runs for one trigger — each firing, its outcome, and any reason",
+          "image": "triggers-runs.png"
+        }
+      ]
+    },
+    {
+      "id": "dbt-lifecycle",
+      "title": "Build and test a dbt project",
+      "intent": "dbt turns SQL files in a git repository into managed tables. The platform clones the repository, runs dbt against the workspace catalog as the person who asked, and records what each run produced — so the models, their lineage and their test results are part of the catalog rather than something tracked separately.",
+      "persona": "analyst",
+      "steps": [
+        {
+          "action": "Connect the git repository that holds the dbt project",
+          "image": "dbt-lifecycle-connection.png"
+        },
+        {
+          "action": "Create a dbt project from that repository",
+          "image": "dbt-lifecycle-project.png"
+        },
+        {
+          "action": "Open the project: the repository files, ready to edit and run",
+          "image": "dbt-lifecycle-ide.png"
+        },
+        {
+          "action": "Load the seed data, then build the models — dbt output as it runs",
+          "image": "dbt-lifecycle-run.png"
+        },
+        {
+          "action": "Read the lineage the run produced, from seed through to the final model",
+          "image": "dbt-lifecycle-lineage.png"
+        },
+        {
+          "action": "Run the project tests, and see which models they cover",
+          "image": "dbt-lifecycle-tests.png"
+        }
+      ]
+    },
+    {
+      "id": "audit-trail",
+      "title": "Audit access, and see what the platform noticed",
+      "intent": "Every data access is recorded with the identity that made it and the decision that was reached — not just that a query ran, but whether it was permitted. Events are emitted in OCSF, the schema SIEM tools consume, so the platform feeds an existing security pipeline rather than being another silo to check.",
+      "persona": "admin",
+      "steps": [
+        {
+          "action": "Open the workspace Audit Log: who reached which table, and what was decided",
+          "image": "audit-trail-log.png"
+        },
+        {
+          "action": "Review Security Alerts: what the platform flagged without being asked",
+          "image": "audit-trail-alerts.png"
+        },
+        {
+          "action": "Build an audit digest — a period summarised, for the review nobody attends live",
+          "image": "audit-trail-digest.png"
+        }
+      ]
+    },
+    {
+      "id": "platform-health",
+      "title": "Check platform health",
+      "intent": "The platform is several services — identity, catalog, authorization, query engines, storage — and the health view reports each one rather than a single green light, so a degraded component is visible before it becomes a failed query.",
+      "persona": "admin",
+      "steps": [
+        {
+          "action": "Open the platform overview from Govern"
+        },
+        {
+          "action": "Open System Health and review each component",
+          "image": "platform-health-system-health.png"
+        }
+      ]
+    }
+  ]
+}

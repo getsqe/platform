@@ -1,0 +1,1778 @@
+{
+  "server": "data-platform-mcp",
+  "instructions": "You are connected to the Data Platform MCP server. This gives you access to an\nenterprise Iceberg data lakehouse managed by Apache Polaris.\n\n## Discovery-first workflow\n\n1. Call `list_namespaces` to see available data domains\n2. Call `list_tables` to browse tables in a namespace\n3. Call `describe_table` to see columns, types, and descriptions\n4. Call `query_data` with a SELECT statement to query data\n\n## Query rules\n\n- Use fully qualified names: `namespace.table`\n- Authorization is enforced by Trino + OPA based on your credentials\n- Max 1000 rows returned per query, 200 shown in response\n\n## Management tools\n\nYou can also manage namespaces, tables, access control, workspaces, and check\nplatform health. Platform operations reuse the same authenticated API contract\nas the CLI and UI.\n\n## Workspaces & dbt projects\n\nData is organised into workspaces (tenants), each owning its own catalog and dbt\nprojects. Use `list_workspaces` to see the workspaces you belong to, then its\n`slug`/`primary_catalog` to scope the other tools:\n\n1. `list_workspaces` \u2192 your workspaces (slug, primary_catalog)\n2. Workspace admins can manage members; platform admins can create/delete\n   workspaces, manage workspace admins, and attach/detach catalogs\n3. `list_projects(workspace)` \u2192 projects in that workspace, typed by `kind`\n   (`dbt` or `notebook`); only `dbt` projects are runnable here\n4. `run_dbt_project(workspace, project_id, command)` \u2192 trigger run/compile/seed/test\n   (dbt projects only)\n5. `get_dbt_run(run_id)` \u2192 poll status until terminal (success/failed/cancelled)\n6. `list_dbt_runs(workspace, project_id)` \u2192 recent run history\n\nTo browse a workspace's data with the discovery tools, pass its `primary_catalog`\n(e.g. `ws_team_a`) as `catalog_name`.\n\n## Schedule tools\n\nThe platform runs scheduled jobs (Langflow flows, dbt project runs, data-quality\ncontract checks) on cron triggers. ``list_schedules`` / ``create_schedule`` /\n``update_schedule`` / ``delete_schedule`` operate on the calling user's own\nschedules \u2014 privacy-scoping is automatic and cross-user access is refused.\nThe dedicated Schedule Assistant flow has more detail on cron translation and\njob-type-specific config shapes.\n",
+  "tool_count": 64,
+  "tools": [
+    {
+      "name": "add_workspace_admin",
+      "description": "Promote a workspace administrator. Platform admin only.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace slug from list_workspaces.",
+            "title": "Workspace",
+            "type": "string"
+          },
+          "username": {
+            "description": "Keycloak username to add to the workspace admin group.",
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace",
+          "username"
+        ],
+        "title": "add_workspace_adminArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "add_workspace_member",
+      "description": "Add a member. Workspace admin or platform admin.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace slug from list_workspaces.",
+            "title": "Workspace",
+            "type": "string"
+          },
+          "username": {
+            "description": "Keycloak username to add to the workspace member group.",
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace",
+          "username"
+        ],
+        "title": "add_workspace_memberArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "attach_catalog",
+      "description": "Attach an existing catalog to a workspace. Platform admin only.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace slug from list_workspaces.",
+            "title": "Workspace",
+            "type": "string"
+          },
+          "catalog_name": {
+            "description": "Catalog to attach, from list_attachable_catalogs.",
+            "title": "Catalog Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace",
+          "catalog_name"
+        ],
+        "title": "attach_catalogArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "cancel_dbt_run",
+      "description": "Cancel an in-flight dbt run in a workspace you belong to. No-op if already finished.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace that owns the dbt run.",
+            "title": "Workspace",
+            "type": "string"
+          },
+          "run_id": {
+            "description": "dbt run id returned by run_dbt_project / list_dbt_runs. No-op if the run already finished.",
+            "title": "Run Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace",
+          "run_id"
+        ],
+        "title": "cancel_dbt_runArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "create_branch",
+      "description": "Create a local git branch in a project's working tree.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace slug from list_workspaces.",
+            "title": "Workspace",
+            "type": "string"
+          },
+          "project_id": {
+            "description": "Project id from list_projects.",
+            "title": "Project Id",
+            "type": "string"
+          },
+          "branch_name": {
+            "description": "New branch name, e.g. 'feature/add-orders-model'.",
+            "title": "Branch Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace",
+          "project_id",
+          "branch_name"
+        ],
+        "title": "create_branchArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "create_namespace",
+      "description": "Create a namespace through the platform API. Properties is a JSON object.",
+      "inputSchema": {
+        "properties": {
+          "namespace": {
+            "description": "Namespace (schema) to create, e.g. 'analytics_db'.",
+            "title": "Namespace",
+            "type": "string"
+          },
+          "properties": {
+            "type": "string",
+            "default": "{}",
+            "description": "JSON object of Iceberg namespace properties, e.g. '{\"owner\": \"team-a\"}'.",
+            "title": "Properties"
+          },
+          "catalog_name": {
+            "default": "",
+            "description": "Catalog to create it in. Defaults to the session's catalog; pass a workspace catalog such as 'ws_team_a' to be explicit.",
+            "title": "Catalog Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "namespace"
+        ],
+        "title": "create_namespaceArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "create_project",
+      "description": "Create a project (kind 'dbt' or 'notebook') in a workspace. Requires workspace admin.\nvisibility is 'shared' or 'personal'. dbt_config is an optional JSON object string.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace slug from list_workspaces.",
+            "title": "Workspace",
+            "type": "string"
+          },
+          "kind": {
+            "description": "Project type: 'dbt' or 'notebook'.",
+            "title": "Kind",
+            "type": "string"
+          },
+          "name": {
+            "description": "Project name, unique within the workspace.",
+            "title": "Name",
+            "type": "string"
+          },
+          "visibility": {
+            "default": "shared",
+            "description": "'shared' (all workspace members) or 'private' (creator only).",
+            "title": "Visibility",
+            "type": "string"
+          },
+          "connection_id": {
+            "default": "",
+            "description": "Connection to run against, from list_connections. Required for dbt projects that will execute.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "dbt_config": {
+            "default": "",
+            "description": "JSON object of dbt settings, e.g. target schema. Ignored for notebook projects.",
+            "title": "Dbt Config",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace",
+          "kind",
+          "name"
+        ],
+        "title": "create_projectArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "create_schedule",
+      "description": "Create a new schedule owned by the calling user.\n\nCron must be a 5-field expression (minute hour dom month dow).\nTranslation of plain English (\"every weekday at 9am\") into\ncron is the agent's responsibility \u2014 see the schedule-assistant\nflow's system prompt.\n\n``job_type`` selects the runner shape:\n- ``langflow``: ``target_id`` = flow id;\n  ``target_config`` = ``{\"message\": \"...\", \"context\": {...}?}``\n- ``dbt``: ``target_id`` = project id;\n  ``target_config`` = ``{\"models\": [...], \"full_refresh\": false}``\n- ``dq``: ``target_id`` = contract id;\n  ``target_config`` = ``{\"scope\": \"full\"|\"incremental\"}``\n\n``notify_targets`` is a list of HTTPS / mailto URIs to alert\non the ``notify_on`` condition (``always`` / ``failure`` /\n``success``). Empty list means \"don't notify\".\n\nReturns the created schedule (including the generated id) so\nthe agent can quote it back to the user for confirmation.\n",
+      "inputSchema": {
+        "properties": {
+          "name": {
+            "description": "Human-readable schedule name, unique for the owner.",
+            "title": "Name",
+            "type": "string"
+          },
+          "cron_expression": {
+            "description": "Five-field cron expression, e.g. '0 6 * * *' for 06:00 daily.",
+            "title": "Cron Expression",
+            "type": "string"
+          },
+          "job_type": {
+            "description": "What to run, e.g. 'dbt', 'query' or 'flow'. Determines how target_id is interpreted.",
+            "title": "Job Type",
+            "type": "string"
+          },
+          "target_id": {
+            "description": "Identifier of the thing to run \u2014 a dbt project id, saved query id or flow id, depending on job_type.",
+            "title": "Target Id",
+            "type": "string"
+          },
+          "target_config_json": {
+            "default": "{}",
+            "description": "JSON object of job-specific options, e.g. '{\"command\": \"run\"}' for dbt.",
+            "title": "Target Config Json",
+            "type": "string"
+          },
+          "description": {
+            "default": "",
+            "description": "Optional free-text description.",
+            "title": "Description",
+            "type": "string"
+          },
+          "timezone_str": {
+            "default": "UTC",
+            "description": "IANA timezone the cron expression is evaluated in, e.g. 'Europe/Amsterdam'. Affects daylight-saving behaviour.",
+            "title": "Timezone Str",
+            "type": "string"
+          },
+          "enabled": {
+            "default": true,
+            "description": "If false, the schedule is created but does not fire until enabled.",
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "notify_targets_json": {
+            "default": "[]",
+            "description": "JSON array of notification targets, e.g. '[\"user@example.com\"]'.",
+            "title": "Notify Targets Json",
+            "type": "string"
+          },
+          "notify_on": {
+            "default": "failure",
+            "description": "When to notify: 'failure', 'success' or 'always'.",
+            "title": "Notify On",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "cron_expression",
+          "job_type",
+          "target_id"
+        ],
+        "title": "create_scheduleArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "create_workspace",
+      "description": "Create or reconcile a workspace. Platform admin only.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "URL-safe workspace slug, e.g. 'team-a'. Its catalog is derived as 'ws_team_a'.",
+            "title": "Workspace",
+            "type": "string"
+          },
+          "display_name": {
+            "description": "Human-readable workspace name.",
+            "title": "Display Name",
+            "type": "string"
+          },
+          "description": {
+            "default": "",
+            "description": "Optional free-text description.",
+            "title": "Description",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace",
+          "display_name"
+        ],
+        "title": "create_workspaceArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "delete_project",
+      "description": "Delete a project and its on-disk working tree. IRREVERSIBLE. Requires workspace admin.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace slug from list_workspaces.",
+            "title": "Workspace",
+            "type": "string"
+          },
+          "project_id": {
+            "description": "Project id from list_projects. Its on-disk working tree is deleted too \u2014 irreversible.",
+            "title": "Project Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace",
+          "project_id"
+        ],
+        "title": "delete_projectArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "delete_schedule",
+      "description": "Delete a schedule the caller owns. Idempotent: re-deleting\na missing row returns ``deleted=false`` rather than erroring,\nso the agent's retry on a flaky network is safe.",
+      "inputSchema": {
+        "properties": {
+          "schedule_id": {
+            "description": "Schedule id from list_schedules. Must be one you own.",
+            "title": "Schedule Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "schedule_id"
+        ],
+        "title": "delete_scheduleArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "delete_workspace",
+      "description": "Delete a workspace and its owned data. Run deletion preflight first.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Slug of the workspace to delete.",
+            "title": "Workspace",
+            "type": "string"
+          },
+          "force": {
+            "default": false,
+            "description": "Delete the workspace row even when teardown steps (grant revocation, IdP group deletion, Polaris catalog deletion) fail. Without it a partial failure returns 409 and leaves the row in status=error.",
+            "title": "Force",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "workspace"
+        ],
+        "title": "delete_workspaceArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "describe_table",
+      "description": "Get column names, types, and descriptions for a table. Pass catalog_name for tables outside the platform default catalog (e.g. workspace catalogs like ws_team_a).",
+      "inputSchema": {
+        "properties": {
+          "namespace": {
+            "description": "Namespace (schema) containing the table.",
+            "title": "Namespace",
+            "type": "string"
+          },
+          "table": {
+            "description": "Table or view to inspect.",
+            "title": "Table",
+            "type": "string"
+          },
+          "catalog_name": {
+            "default": "",
+            "description": "Catalog containing the table. Defaults to the session's catalog.",
+            "title": "Catalog Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "namespace",
+          "table"
+        ],
+        "title": "describe_tableArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "detach_catalog",
+      "description": "Detach a shared catalog from a workspace. Platform admin only.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace slug from list_workspaces.",
+            "title": "Workspace",
+            "type": "string"
+          },
+          "catalog_name": {
+            "description": "Shared catalog to detach, from list_workspace_catalogs. A workspace's own primary catalog cannot be detached \u2014 deprovision the workspace instead.",
+            "title": "Catalog Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace",
+          "catalog_name"
+        ],
+        "title": "detach_catalogArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "drop_namespace",
+      "description": "Drop an empty namespace through the platform API.",
+      "inputSchema": {
+        "properties": {
+          "namespace": {
+            "description": "Namespace (schema) to drop. Must already be empty.",
+            "title": "Namespace",
+            "type": "string"
+          },
+          "catalog_name": {
+            "default": "",
+            "description": "Catalog to target. Defaults to the session's catalog; pass a workspace catalog such as 'ws_team_a' to be explicit.",
+            "title": "Catalog Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "namespace"
+        ],
+        "title": "drop_namespaceArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "drop_table",
+      "description": "Drop a table through the platform API.",
+      "inputSchema": {
+        "properties": {
+          "namespace": {
+            "description": "Namespace (schema) containing the table.",
+            "title": "Namespace",
+            "type": "string"
+          },
+          "table": {
+            "description": "Table to drop.",
+            "title": "Table",
+            "type": "string"
+          },
+          "purge": {
+            "default": false,
+            "description": "If true, also delete the underlying data files. Destructive and not recoverable; false only removes the catalog entry.",
+            "title": "Purge",
+            "type": "boolean"
+          },
+          "catalog_name": {
+            "default": "",
+            "description": "Catalog containing the table. Defaults to the session's catalog.",
+            "title": "Catalog Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "namespace",
+          "table"
+        ],
+        "title": "drop_tableArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_anomalies",
+      "description": "Get active data quality anomalies across contracts.",
+      "inputSchema": {
+        "properties": {
+          "domain": {
+            "default": "",
+            "description": "Restrict to one business domain; empty means every domain.",
+            "title": "Domain",
+            "type": "string"
+          },
+          "time_range_hours": {
+            "default": 24,
+            "description": "Only report anomalies whose run started within this many hours. The detection baseline is unaffected \u2014 it always spans the last 50 quality runs, so a short window still compares against full history instead of returning nothing.",
+            "title": "Time Range Hours",
+            "type": "integer"
+          }
+        },
+        "title": "get_anomaliesArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_contract",
+      "description": "Get a data contract by ID. Returns schema, quality rules, SLAs, owner.",
+      "inputSchema": {
+        "properties": {
+          "contract_id": {
+            "description": "Data-contract row id from list_contracts (the `id`, not the URN).",
+            "title": "Contract Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "contract_id"
+        ],
+        "title": "get_contractArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_dbt_run",
+      "description": "Get the status and logs of a dbt run.\n\n``status`` is one of ``pending`` / ``running`` / ``success`` /\n``failed`` / ``cancelled`` (the first two are non-terminal \u2014 keep\npolling). ``log_output`` is populated once the run is terminal. You may\nonly read runs in workspaces you belong to.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace that owns the dbt run.",
+            "title": "Workspace",
+            "type": "string"
+          },
+          "run_id": {
+            "description": "dbt run id returned by run_dbt_project / list_dbt_runs.",
+            "title": "Run Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace",
+          "run_id"
+        ],
+        "title": "get_dbt_runArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_diff",
+      "description": "Return the git diff of uncommitted changes in a project's working tree.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace slug from list_workspaces.",
+            "title": "Workspace",
+            "type": "string"
+          },
+          "project_id": {
+            "description": "Project id from list_projects.",
+            "title": "Project Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace",
+          "project_id"
+        ],
+        "title": "get_diffArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_flow",
+      "description": "Get an AI flow's metadata (name, description, type, category) by id.",
+      "inputSchema": {
+        "properties": {
+          "flow_id": {
+            "description": "Flow id from list_flows.",
+            "title": "Flow Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "flow_id"
+        ],
+        "title": "get_flowArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_namespace",
+      "description": "Get namespace properties in a catalog.",
+      "inputSchema": {
+        "properties": {
+          "namespace": {
+            "description": "Namespace (schema) to act on, dot-separated for nested levels.",
+            "title": "Namespace",
+            "type": "string"
+          },
+          "catalog_name": {
+            "default": "",
+            "description": "Catalog to target. Defaults to the session's catalog; pass a workspace catalog such as 'ws_team_a' to be explicit.",
+            "title": "Catalog Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "namespace"
+        ],
+        "title": "get_namespaceArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_notebook",
+      "description": "Read one of YOUR notebook documents (.ipynb JSON) by path. Notebooks are personal;\nthe workspace arg is used only to check your membership.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace slug, used ONLY for the membership check \u2014 notebooks are personal to you.",
+            "title": "Workspace",
+            "type": "string"
+          },
+          "path": {
+            "description": "Notebook path from list_notebooks, e.g. 'analysis/eda.ipynb'.",
+            "title": "Path",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace",
+          "path"
+        ],
+        "title": "get_notebookArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_project",
+      "description": "Get a project's metadata (kind, name, visibility) by id, within a workspace you belong to.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace slug from list_workspaces.",
+            "title": "Workspace",
+            "type": "string"
+          },
+          "project_id": {
+            "description": "Project id from list_projects.",
+            "title": "Project Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace",
+          "project_id"
+        ],
+        "title": "get_projectArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_quality_status",
+      "description": "Get the latest quality check results for a table.",
+      "inputSchema": {
+        "properties": {
+          "catalog_name": {
+            "description": "Catalog containing the table. Defaults to the session's catalog.",
+            "title": "Catalog Name",
+            "type": "string"
+          },
+          "namespace": {
+            "description": "Namespace (schema) containing the table.",
+            "title": "Namespace",
+            "type": "string"
+          },
+          "table": {
+            "description": "Table to report on.",
+            "title": "Table",
+            "type": "string"
+          }
+        },
+        "required": [
+          "catalog_name",
+          "namespace",
+          "table"
+        ],
+        "title": "get_quality_statusArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_remote_status",
+      "description": "Return git status vs the remote (ahead/behind/dirty) for a project.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace slug from list_workspaces.",
+            "title": "Workspace",
+            "type": "string"
+          },
+          "project_id": {
+            "description": "Project id from list_projects.",
+            "title": "Project Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace",
+          "project_id"
+        ],
+        "title": "get_remote_statusArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_table",
+      "description": "Get full table metadata through the platform API.",
+      "inputSchema": {
+        "properties": {
+          "namespace": {
+            "description": "Namespace (schema) containing the table.",
+            "title": "Namespace",
+            "type": "string"
+          },
+          "table": {
+            "description": "Table to inspect.",
+            "title": "Table",
+            "type": "string"
+          },
+          "catalog_name": {
+            "default": "",
+            "description": "Catalog containing the table. Defaults to the session's catalog.",
+            "title": "Catalog Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "namespace",
+          "table"
+        ],
+        "title": "get_tableArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_table_snapshots",
+      "description": "Get recent snapshots for a table through the platform API.",
+      "inputSchema": {
+        "properties": {
+          "namespace": {
+            "description": "Namespace (schema) containing the table.",
+            "title": "Namespace",
+            "type": "string"
+          },
+          "table": {
+            "description": "Table to inspect.",
+            "title": "Table",
+            "type": "string"
+          },
+          "limit": {
+            "default": 10,
+            "description": "Maximum number of snapshots to return, newest first.",
+            "title": "Limit",
+            "type": "integer"
+          },
+          "catalog_name": {
+            "default": "",
+            "description": "Catalog containing the table. Defaults to the session's catalog.",
+            "title": "Catalog Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "namespace",
+          "table"
+        ],
+        "title": "get_table_snapshotsArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "git_commit",
+      "description": "Commit the project's working-tree changes LOCALLY (does not push). Returns the commit sha.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace slug from list_workspaces.",
+            "title": "Workspace",
+            "type": "string"
+          },
+          "project_id": {
+            "description": "Project id from list_projects.",
+            "title": "Project Id",
+            "type": "string"
+          },
+          "message": {
+            "description": "Commit message.",
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace",
+          "project_id",
+          "message"
+        ],
+        "title": "git_commitArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "git_pull",
+      "description": "Pull the latest from the remote. WARNING: discards uncommitted local changes\n(git reset --hard && clean) before pulling.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace slug from list_workspaces.",
+            "title": "Workspace",
+            "type": "string"
+          },
+          "project_id": {
+            "description": "Project id from list_projects. Its uncommitted changes are discarded before the pull.",
+            "title": "Project Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace",
+          "project_id"
+        ],
+        "title": "git_pullArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "git_push",
+      "description": "Push committed changes to the external remote. Requires workspace admin (irreversible, external).",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace slug from list_workspaces.",
+            "title": "Workspace",
+            "type": "string"
+          },
+          "project_id": {
+            "description": "Project id from list_projects. Its committed changes go to the external remote.",
+            "title": "Project Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace",
+          "project_id"
+        ],
+        "title": "git_pushArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "grant_table_access",
+      "description": "Grant data access via Apache Ranger (the authoritative data-access backend).\n\nTwo modes. Normal: pass `privilege` \u2014 SELECT, INSERT, MODIFY, ALTER, MONITOR,\nCREATE, `CREATE NAMESPACE` (aka `CREATE SCHEMA`), `CREATE VIEW`, DROP, USE,\nMANAGE, ALL \u2014 which expands into one policy per resource level so the grantee can\nactually reach the table. Advanced: pass `access_types` (exact polaris service-def\nnames) with `level` (catalog|namespace|table) for precise control and no expansion.\n\nPrefer INSERT over MODIFY for pipelines that only append or update rows: MODIFY\nadditionally allows repointing the table at different storage.\n\n`grant_option` is SQL WITH GRANT OPTION \u2014 it lets the grantee re-grant and revoke\nthis privilege. Off by default; holding a privilege never implies being able to\ngrant it.\n\nnamespace and table are optional: omit them for a catalog-level grant. grantee_type\nis USER, ROLE, or GROUP. The grant is authorized by Ranger against YOUR identity,\nso you can only grant what you are permitted to grant.",
+      "inputSchema": {
+        "properties": {
+          "catalog": {
+            "description": "Catalog the grant applies to, e.g. 'main_warehouse' or a workspace catalog 'ws_team_a'.",
+            "title": "Catalog",
+            "type": "string"
+          },
+          "grantee": {
+            "description": "Identity receiving the grant: a username when grantee_type is USER, or a role name when ROLE.",
+            "title": "Grantee",
+            "type": "string"
+          },
+          "namespace": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Namespace (schema) to scope the grant to. Omit to grant at catalog level.",
+            "title": "Namespace"
+          },
+          "table": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Table to scope the grant to. Requires namespace. Omit to grant at namespace level.",
+            "title": "Table"
+          },
+          "grantee_type": {
+            "default": "ROLE",
+            "description": "USER or ROLE. Prefer ROLE for teams \u2014 Keycloak groups map to Ranger roles of the same name.",
+            "title": "Grantee Type",
+            "type": "string"
+          },
+          "privilege": {
+            "default": "SELECT",
+            "description": "SQL-style privilege: SELECT, MODIFY, CREATE, DROP, USE, MANAGE or ALL.",
+            "title": "Privilege",
+            "type": "string"
+          },
+          "access_types": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Ranger access types, as an escape hatch when 'privilege' does not express what you need. Leave unset to derive them from 'privilege'.",
+            "title": "Access Types"
+          },
+          "level": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Resource level to write the policy at when it cannot be inferred from namespace/table. Load-bearing: the wrong level silently widens or narrows the grant.",
+            "title": "Level"
+          },
+          "grant_option": {
+            "default": false,
+            "description": "If true, the grantee may re-grant this privilege to others (Ranger delegateAdmin).",
+            "title": "Grant Option",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "catalog",
+          "grantee"
+        ],
+        "title": "grant_table_accessArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "investigate_quality_drop",
+      "description": "Root cause analysis for a quality score drop.",
+      "inputSchema": {
+        "properties": {
+          "contract_id": {
+            "description": "Data-contract row id from list_contracts (the `id`, not the URN). Needs at least two quality runs.",
+            "title": "Contract Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "contract_id"
+        ],
+        "title": "investigate_quality_dropArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_attachable_catalogs",
+      "description": "List catalogs available to attach. Platform admin only.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace slug the catalogs would be attached to.",
+            "title": "Workspace",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace"
+        ],
+        "title": "list_attachable_catalogsArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_contracts",
+      "description": "List all data contracts, optionally filtered by domain or namespace.",
+      "inputSchema": {
+        "properties": {
+          "domain": {
+            "default": "",
+            "description": "Restrict to one business domain; empty means every domain.",
+            "title": "Domain",
+            "type": "string"
+          },
+          "namespace": {
+            "default": "",
+            "description": "Restrict to contracts on tables in this namespace (exact match, e.g. 'sales.raw'); empty string means every namespace.",
+            "title": "Namespace",
+            "type": "string"
+          }
+        },
+        "title": "list_contractsArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_dbt_runs",
+      "description": "List recent dbt runs for a project, newest first (excludes logs).\n\nSpans every run on the project's persistent tree (all users). Use\n``get_dbt_run(run_id)`` for a single run's logs. ``limit`` is clamped to\n1\u2013200.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace slug from list_workspaces.",
+            "title": "Workspace",
+            "type": "string"
+          },
+          "project_id": {
+            "description": "dbt project id from list_projects.",
+            "title": "Project Id",
+            "type": "string"
+          },
+          "limit": {
+            "default": 20,
+            "description": "Max runs to return, newest first (1-200).",
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "workspace",
+          "project_id"
+        ],
+        "title": "list_dbt_runsArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_files",
+      "description": "List the file tree of a project's working tree.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace slug from list_workspaces.",
+            "title": "Workspace",
+            "type": "string"
+          },
+          "project_id": {
+            "description": "Project id from list_projects.",
+            "title": "Project Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace",
+          "project_id"
+        ],
+        "title": "list_filesArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_flows",
+      "description": "List the AI flows (Langflow assistants) available to you.\n\nEach flow has a ``type`` of ``system`` (platform-provided, e.g. the\nPlatform Assistant) or ``user`` (custom). Use a flow's ``id`` with\n``run_flow``. Pass ``flow_type='system'`` or ``'user'`` to filter.",
+      "inputSchema": {
+        "properties": {
+          "flow_type": {
+            "default": "",
+            "description": "Filter: 'system', 'user', or '' for all flows.",
+            "title": "Flow Type",
+            "type": "string"
+          }
+        },
+        "title": "list_flowsArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_namespaces",
+      "description": "List all namespaces (data domains) in a catalog. Call this first to discover available data. catalog_name selects which catalog to list (e.g. a workspace catalog like ws_team_a); omit it for the platform default catalog.",
+      "inputSchema": {
+        "properties": {
+          "catalog_name": {
+            "default": "",
+            "description": "Catalog to target. Defaults to the session's catalog; pass a workspace catalog such as 'ws_team_a' to be explicit. A workspace's namespaces look empty if you leave it at the default.",
+            "title": "Catalog Name",
+            "type": "string"
+          }
+        },
+        "title": "list_namespacesArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_notebooks",
+      "description": "List YOUR notebook documents (notebooks are personal, keyed to your user).\nThe workspace arg is used only to check your membership.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace slug, used ONLY for the membership check \u2014 notebooks are personal, so this does not scope results.",
+            "title": "Workspace",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace"
+        ],
+        "title": "list_notebooksArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_projects",
+      "description": "List the projects in a workspace you belong to.\n\nProjects are typed by ``kind`` \u2014 ``dbt`` or ``notebook``. Pass\n``kind=\"dbt\"`` or ``kind=\"notebook\"`` to filter, or omit for both. Use a\nproject's ``id`` with ``run_dbt_project`` / ``list_dbt_runs`` (dbt\nprojects only \u2014 notebooks can be listed but not run from here).\n\n``workspace`` is a slug from ``list_workspaces``. Returns shared projects\nplus your own personal ones.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace slug from list_workspaces, e.g. 'team-a'.",
+            "title": "Workspace",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "description": "Filter by project kind: 'dbt', 'notebook', or '' for both.",
+            "title": "Kind",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace"
+        ],
+        "title": "list_projectsArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_quality_issues",
+      "description": "List all failing quality checks across all contracts.",
+      "inputSchema": {
+        "properties": {
+          "domain": {
+            "default": "",
+            "description": "Restrict to one business domain; empty means every domain.",
+            "title": "Domain",
+            "type": "string"
+          }
+        },
+        "title": "list_quality_issuesArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_roles",
+      "description": "List catalog roles through the platform API.",
+      "inputSchema": {
+        "properties": {
+          "catalog_name": {
+            "default": "",
+            "description": "Catalog to target. Defaults to the session's catalog; pass a workspace catalog such as 'ws_team_a' to be explicit.",
+            "title": "Catalog Name",
+            "type": "string"
+          }
+        },
+        "title": "list_rolesArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_schedules",
+      "description": "List schedules owned by the calling user.\n\n``job_type`` filters to one of ``langflow`` / ``dbt`` / ``dq``\nwhen set; pass an empty string to get every type. The agent\nusually wants this when the user asks \"what schedules do I\nhave?\" or before editing a schedule (so it knows the IDs).\n",
+      "inputSchema": {
+        "properties": {
+          "job_type": {
+            "default": "",
+            "description": "Restrict to one job type, e.g. 'dbt', 'langflow' or 'dq'; empty means every type.",
+            "title": "Job Type",
+            "type": "string"
+          }
+        },
+        "title": "list_schedulesArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_tables",
+      "description": "List all tables AND views in a namespace (ontology entities are views). IMPORTANT: namespaces live inside a catalog \u2014 pass catalog_name (e.g. ws_team_a, team_a_data; see the page context's platform key) or the platform default catalog is assumed and workspace namespaces will look empty.",
+      "inputSchema": {
+        "properties": {
+          "namespace": {
+            "description": "Namespace (schema) to list, from list_namespaces.",
+            "title": "Namespace",
+            "type": "string"
+          },
+          "catalog_name": {
+            "default": "",
+            "description": "Catalog to target. Defaults to the session's catalog; pass a workspace catalog such as 'ws_team_a' to be explicit. A workspace's namespaces look empty if you leave it at the default.",
+            "title": "Catalog Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "namespace"
+        ],
+        "title": "list_tablesArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_workspace_catalogs",
+      "description": "List catalogs owned by or attached to a workspace.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace slug from list_workspaces.",
+            "title": "Workspace",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace"
+        ],
+        "title": "list_workspace_catalogsArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_workspace_members",
+      "description": "List workspace members and administrators.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace slug from list_workspaces.",
+            "title": "Workspace",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace"
+        ],
+        "title": "list_workspace_membersArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_workspaces",
+      "description": "List the workspaces (tenants) you are a member of.\n\nEach workspace owns an Iceberg catalog and its own dbt projects. Use the\nreturned ``slug`` as the ``workspace`` argument to the other workspace\ntools (``list_projects``, ``run_dbt_project``, ``list_dbt_runs``), and\n``primary_catalog`` as the ``catalog_name`` for the discovery tools to\nbrowse that tenant's data.",
+      "inputSchema": {
+        "properties": {},
+        "title": "list_workspacesArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "platform_status",
+      "description": "Check platform connectivity for a catalog and return object counts.",
+      "inputSchema": {
+        "properties": {
+          "catalog_name": {
+            "default": "",
+            "description": "Catalog to target. Defaults to the session's catalog; pass a workspace catalog such as 'ws_team_a' to be explicit.",
+            "title": "Catalog Name",
+            "type": "string"
+          }
+        },
+        "title": "platform_statusArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "query_data",
+      "description": "Run a SQL query against Iceberg tables. Authorization enforced by Trino + OPA. Use fully qualified names: namespace.table. Max 1000 rows returned.",
+      "inputSchema": {
+        "properties": {
+          "sql": {
+            "description": "A single SELECT statement. Use fully qualified namespace.table names; capped at 1000 rows.",
+            "title": "Sql",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sql"
+        ],
+        "title": "query_dataArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "read_file",
+      "description": "Read a file from a project's working tree. Returns content + blob_sha (for write_file expected_sha).",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace slug from list_workspaces.",
+            "title": "Workspace",
+            "type": "string"
+          },
+          "project_id": {
+            "description": "Project id from list_projects.",
+            "title": "Project Id",
+            "type": "string"
+          },
+          "path": {
+            "description": "Path relative to the project root, e.g. 'models/staging/stg_orders.sql'. Use list_files to discover it.",
+            "title": "Path",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace",
+          "project_id",
+          "path"
+        ],
+        "title": "read_fileArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "register_table",
+      "description": "Register an existing Iceberg table through the platform API.",
+      "inputSchema": {
+        "properties": {
+          "namespace": {
+            "description": "Namespace (schema) that will contain the table.",
+            "title": "Namespace",
+            "type": "string"
+          },
+          "table": {
+            "description": "Table name to register.",
+            "title": "Table",
+            "type": "string"
+          },
+          "metadata_location": {
+            "description": "Full URI of the existing Iceberg metadata JSON, e.g. 's3://bucket/path/metadata/00001-....metadata.json'.",
+            "title": "Metadata Location",
+            "type": "string"
+          },
+          "catalog_name": {
+            "default": "",
+            "description": "Catalog to register into. Defaults to the session's catalog.",
+            "title": "Catalog Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "namespace",
+          "table",
+          "metadata_location"
+        ],
+        "title": "register_tableArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "remove_workspace_admin",
+      "description": "Demote a workspace administrator. Platform admin only.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace slug from list_workspaces.",
+            "title": "Workspace",
+            "type": "string"
+          },
+          "username": {
+            "description": "Keycloak username to demote, from the `admins` list in list_workspace_members.",
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace",
+          "username"
+        ],
+        "title": "remove_workspace_adminArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "remove_workspace_member",
+      "description": "Remove a member. Workspace admin or platform admin.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace slug from list_workspaces.",
+            "title": "Workspace",
+            "type": "string"
+          },
+          "username": {
+            "description": "Keycloak username to remove, from list_workspace_members.",
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace",
+          "username"
+        ],
+        "title": "remove_workspace_memberArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "revoke_table_access",
+      "description": "Revoke a privilege on a table from a Ranger user/role (group). Writes to Apache Ranger.",
+      "inputSchema": {
+        "properties": {
+          "catalog": {
+            "description": "Catalog the revoke applies to.",
+            "title": "Catalog",
+            "type": "string"
+          },
+          "grantee": {
+            "description": "Identity losing the grant: a username when grantee_type is USER, or a role name when ROLE.",
+            "title": "Grantee",
+            "type": "string"
+          },
+          "namespace": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Namespace (schema) the grant was scoped to. Must match how it was granted.",
+            "title": "Namespace"
+          },
+          "table": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Table the grant was scoped to. Must match how it was granted.",
+            "title": "Table"
+          },
+          "grantee_type": {
+            "default": "ROLE",
+            "description": "USER or ROLE \u2014 must match the original grant.",
+            "title": "Grantee Type",
+            "type": "string"
+          },
+          "privilege": {
+            "default": "SELECT",
+            "description": "Privilege to remove: SELECT, MODIFY, CREATE, DROP, USE, MANAGE or ALL.",
+            "title": "Privilege",
+            "type": "string"
+          },
+          "access_types": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Explicit Ranger access types to remove, instead of deriving them from 'privilege'.",
+            "title": "Access Types"
+          },
+          "level": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Resource level the policy was written at, when it cannot be inferred from namespace/table.",
+            "title": "Level"
+          }
+        },
+        "required": [
+          "catalog",
+          "grantee"
+        ],
+        "title": "revoke_table_accessArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "run_dbt_project",
+      "description": "Trigger a dbt build against a project's persistent tree.\n\n``command`` is one of ``run`` / ``compile`` / ``seed`` / ``test``.\n``models`` is an optional space- or comma-separated dbt selector list\n(empty = all models; ignored for compile/seed). The run is asynchronous:\nthis returns ``{id, command, status}`` where status is usually\n``pending`` or ``running`` \u2014 poll ``get_dbt_run(run_id)`` until it\nreaches a terminal status (``success`` / ``failed`` / ``cancelled``).\nRuns on the same project are serialized; different projects run in\nparallel.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace slug from list_workspaces.",
+            "title": "Workspace",
+            "type": "string"
+          },
+          "project_id": {
+            "description": "dbt project id from list_projects (must be kind='dbt').",
+            "title": "Project Id",
+            "type": "string"
+          },
+          "command": {
+            "default": "run",
+            "description": "One of: run, compile, seed, test.",
+            "title": "Command",
+            "type": "string"
+          },
+          "models": {
+            "default": "",
+            "description": "Optional dbt selector list, space- or comma-separated; empty = all models. Ignored for compile/seed.",
+            "title": "Models",
+            "type": "string"
+          },
+          "full_refresh": {
+            "default": false,
+            "description": "Pass --full-refresh (run only).",
+            "title": "Full Refresh",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "workspace",
+          "project_id"
+        ],
+        "title": "run_dbt_projectArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "run_flow",
+      "description": "Run an AI flow with a message and get its final answer.\n\nThe flow reasons server-side (Langflow) and may call other platform\ntools on your behalf. The streamed response is aggregated into a single\n``text`` result; ``session_id`` is returned so you can continue the\nconversation. Use ``list_flows`` to discover flow ids.",
+      "inputSchema": {
+        "properties": {
+          "flow_id": {
+            "description": "Flow id from list_flows.",
+            "title": "Flow Id",
+            "type": "string"
+          },
+          "message": {
+            "description": "The prompt to send to the flow.",
+            "title": "Message",
+            "type": "string"
+          },
+          "session_id": {
+            "default": "",
+            "description": "Continue a prior conversation; omit to start fresh.",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "persona": {
+            "default": "",
+            "description": "Optional persona hint (query/dbt/insights/...); omit for auto.",
+            "title": "Persona",
+            "type": "string"
+          }
+        },
+        "required": [
+          "flow_id",
+          "message"
+        ],
+        "title": "run_flowArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "show_workspace",
+      "description": "Show a workspace and its catalog bindings. Members and platform admins only.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace slug from list_workspaces.",
+            "title": "Workspace",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace"
+        ],
+        "title": "show_workspaceArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "suggest_contract_improvements",
+      "description": "Analyze a contract for completeness and suggest improvements.",
+      "inputSchema": {
+        "properties": {
+          "contract_id": {
+            "description": "Data-contract row id from list_contracts (the `id`, not the URN).",
+            "title": "Contract Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "contract_id"
+        ],
+        "title": "suggest_contract_improvementsArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "update_contract",
+      "description": "Replace a contract's YAML.\n\n``contract_id`` is the row UUID returned by ``get_contract``.\n``yaml_content`` must be a complete ODCS document \u2014 partial\ndiffs aren't supported because the editor and the AI both\nsubmit the full property list. The platform service replaces\nthe property set wholesale, validates against ODCS, and\nappends an audit row to the platform-wide audit_log.\n\nThe ``info.contractId`` (the URN) must match the existing\nrow's contract_id; changing it would silently break\ndownstream consumers (dbt sources, OPA tags, scheduler\ntarget_id) that lock on it. Submit only edits to\nschema/quality/SLA/team/description fields.\n\nReturns the updated contract row (with properties joined\nin) on success, or a tool_error when the row doesn't exist\nor the YAML fails ODCS validation.\n",
+      "inputSchema": {
+        "properties": {
+          "contract_id": {
+            "description": "Data-contract row id from list_contracts (the `id`, not the URN).",
+            "title": "Contract Id",
+            "type": "string"
+          },
+          "yaml_content": {
+            "description": "Complete ODCS document. Partial diffs are not supported \u2014 the property set is replaced wholesale, and info.contractId must match the existing row's.",
+            "title": "Yaml Content",
+            "type": "string"
+          }
+        },
+        "required": [
+          "contract_id",
+          "yaml_content"
+        ],
+        "title": "update_contractArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "update_project",
+      "description": "Update a project's name/connection/default_branch/dbt_config. Requires workspace admin.\nEmpty string args are left unchanged. dbt_config is an optional JSON object string.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace slug from list_workspaces.",
+            "title": "Workspace",
+            "type": "string"
+          },
+          "project_id": {
+            "description": "Project id from list_projects.",
+            "title": "Project Id",
+            "type": "string"
+          },
+          "name": {
+            "default": "",
+            "description": "New project name. Leave empty to keep the current one.",
+            "title": "Name",
+            "type": "string"
+          },
+          "connection_id": {
+            "default": "",
+            "description": "New connection id. Leave empty to keep the current one.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "default_branch": {
+            "default": "",
+            "description": "Git branch used when none is specified, e.g. 'main'.",
+            "title": "Default Branch",
+            "type": "string"
+          },
+          "dbt_config": {
+            "default": "",
+            "description": "Replacement JSON object of dbt settings. Leave empty to keep the current one.",
+            "title": "Dbt Config",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace",
+          "project_id"
+        ],
+        "title": "update_projectArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "update_schedule",
+      "description": "Update fields on an existing schedule the caller owns.\n\n``fields_json`` is a JSON object with any subset of:\n``name``, ``description``, ``cron_expression``, ``timezone``,\n``enabled``, ``notify_targets``, ``notify_on``,\n``target_config``. Unknown keys are rejected by the\nrepository's whitelist.\n\nReturns the updated schedule on success.\n",
+      "inputSchema": {
+        "properties": {
+          "schedule_id": {
+            "description": "Schedule id from list_schedules. Must be one you own.",
+            "title": "Schedule Id",
+            "type": "string"
+          },
+          "fields_json": {
+            "description": "JSON object with any subset of: name, description, cron_expression, timezone, enabled, notify_targets, notify_on, target_config. Unknown keys are rejected.",
+            "title": "Fields Json",
+            "type": "string"
+          }
+        },
+        "required": [
+          "schedule_id",
+          "fields_json"
+        ],
+        "title": "update_scheduleArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "workspace_deletion_preflight",
+      "description": "Preview destructive workspace deletion. Platform admin only.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace slug from list_workspaces.",
+            "title": "Workspace",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace"
+        ],
+        "title": "workspace_deletion_preflightArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "write_file",
+      "description": "Write a file in a project's working tree. Pass expected_sha (from read_file) for\noptimistic-concurrency; omit to force-write.",
+      "inputSchema": {
+        "properties": {
+          "workspace": {
+            "description": "Workspace slug from list_workspaces.",
+            "title": "Workspace",
+            "type": "string"
+          },
+          "project_id": {
+            "description": "Project id from list_projects.",
+            "title": "Project Id",
+            "type": "string"
+          },
+          "path": {
+            "description": "Path relative to the project root, e.g. 'models/staging/stg_orders.sql'.",
+            "title": "Path",
+            "type": "string"
+          },
+          "content": {
+            "description": "Full new file content. This replaces the file rather than patching it.",
+            "title": "Content",
+            "type": "string"
+          },
+          "expected_sha": {
+            "default": "",
+            "description": "SHA returned by read_file, for optimistic concurrency. If it no longer matches the write is rejected instead of clobbering someone else's change.",
+            "title": "Expected Sha",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace",
+          "project_id",
+          "path",
+          "content"
+        ],
+        "title": "write_fileArguments",
+        "type": "object"
+      }
+    }
+  ]
+}

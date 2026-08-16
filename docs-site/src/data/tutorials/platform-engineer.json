@@ -1,0 +1,49 @@
+{
+  "id": "platform-engineer",
+  "order": 3,
+  "title": "Set up a workspace for a team",
+  "audience": "Platform engineer",
+  "time": "About 20 minutes",
+  "outcome": "A workspace with its own catalog and storage, a team that can use it, a service principal for the systems that need machine access, and a health check you can point at when someone says the platform is broken.",
+  "intro": "You are handing a team somewhere to work. The unit you hand over is a **workspace**: it owns exactly one catalog, its own storage buckets, and the groups whose members administer or use it. Getting that boundary right at the start is most of the job — it is what keeps one team's tables out of another team's reach.\n\nTwo rules worth holding on to before you begin. **Identity lives in Keycloak** — people and machines alike. **Authorization lives in Apache Ranger**, and it is decided for the end user, not for the engine they happen to use. A grant you make applies whether they arrive by SQL, Spark or a notebook.",
+  "prerequisites": [
+    "Platform administrator rights. Creating workspaces and service principals is not a workspace-level action.",
+    "The team's Keycloak group, or the names of the people who should administer the workspace.",
+    "A decision you should make before you start, not after: does this team get its own workspace, or membership of an existing one? One catalog belongs to exactly one workspace, so this is the boundary you are choosing."
+  ],
+  "sections": [
+    {
+      "heading": "Sign in as an administrator",
+      "useCase": "sign-in",
+      "steps": [
+        1
+      ],
+      "prose": "An administrator lands on the platform overview rather than a workspace. If you land somewhere else, you are not in the admin group — that is the thing to fix first, and it is fixed in Keycloak, not here."
+    },
+    {
+      "heading": "Create the workspace",
+      "useCase": "manage-workspace",
+      "prose": "Creating a workspace provisions more than a row: its catalog, its warehouse and staging buckets, and the Keycloak admin and member groups that go with it. The catalog name is **derived** from the slug — `acme-analytics` becomes `ws_acme_analytics` — so choose the slug as carefully as you would a database name. It is what everyone will type in SQL."
+    },
+    {
+      "heading": "Give the team access",
+      "useCase": "grant-access",
+      "prose": "Grant to a **group** rather than to people. Group membership survives joining and leaving; a pile of per-person grants does not, and it is how access quietly outlives the person who needed it.\n\nOne caveat worth knowing before you debug someone else's problem: a Keycloak admin is not automatically authorized in Ranger. Being an administrator of the platform and being able to read a table are different questions with different answers."
+    },
+    {
+      "heading": "Create a service principal for machines",
+      "useCase": "service-principal",
+      "prose": "People get accounts; systems get service principals. A service principal is a confidential OIDC client with its own credentials, provisioned through the platform so its access is governed the same way a person's is — least privilege, read-only unless you say otherwise.\n\nUse one per system, not one shared between them. When you later need to revoke access for one pipeline, you will be glad it was not the credential four other things also used."
+    },
+    {
+      "heading": "Check the platform is actually healthy",
+      "useCase": "platform-health",
+      "prose": "The platform is several services — identity, catalog, authorization, query engines, storage — and the health view reports each one rather than a single green light. Learn what it looks like when everything is fine, before you need to read it in a hurry.\n\nThis is also the page to open first when a user reports that data has disappeared. A stopped authorization service does not produce an error; it produces an empty result, which looks exactly like having no data."
+    }
+  ],
+  "nextSteps": [
+    "Hand the team the data-engineer tutorial. It starts where this one ends.",
+    "Decide how work gets scheduled: triggers fire on an event, schedules fire on a clock, and Airflow orchestrates across systems.",
+    "Read the audit trail once while nothing is wrong, so you know where it is when something is."
+  ]
+}

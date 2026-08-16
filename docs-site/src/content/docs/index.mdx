@@ -1,0 +1,42 @@
+---
+title: Chameleon Data Platform
+description: Sovereign data platform — an Iceberg catalog, per-user authorization, and the engines, pipelines and agents on top of it.
+template: splash
+hero:
+  tagline: Your data, your cloud, your rules. An Apache Iceberg lakehouse with authorization that actually follows the end user.
+  actions:
+    - text: Start here
+      link: /start/quickstart/
+      icon: right-arrow
+    - text: REST API reference
+      link: /reference/api/
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components'
+
+<CardGrid stagger>
+  <Card title="Per-user authorization" icon="approve-check">
+    Grants are enforced against the **end user**, not a shared service account.
+    The user's identity travels browser → BFF → engine → catalog → Ranger, so two
+    people running the same query can legitimately see different rows.
+  </Card>
+  <Card title="Open formats, no lock-in" icon="open-book">
+    Apache Iceberg tables in your own object storage, catalogued by Apache
+    Polaris. Nothing proprietary in the storage layer.
+  </Card>
+  <Card title="Bring your own engine" icon="puzzle">
+    Query with SQE, Spark or Trino against the same catalog and the same
+    policies.
+  </Card>
+  <Card title="Built for agents" icon="rocket">
+    A first-class MCP server exposes the platform to AI clients with the calling
+    user's own permissions — not an admin token.
+  </Card>
+</CardGrid>
+
+## About this site
+
+The [REST API reference](/reference/api/) is generated from the running
+application, so it cannot drift from the code. The CLI, MCP, Airflow and
+Terraform references are generated the same way, from the tools themselves.

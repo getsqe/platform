@@ -1,0 +1,75 @@
+/*
+ * Click-to-zoom for screenshots.
+ *
+ * The screenshots are captured at 1440x900 and rendered into a content column
+ * roughly half that wide, so detail a caption refers to — a status badge, a
+ * masked credential, one row in a table — is legible in the file and not on the
+ * page. Zoom is the difference between a screenshot that decorates a page and
+ * one a reader can actually use.
+ *
+ * No dependency: a library for this would be another supply-chain surface and
+ * another thing to keep current, for ~40 lines of behaviour.
+ */
+
+/* Only content images. Logos, icons and diagrams in the chrome are untouched. */
+.sl-markdown-content img {
+  cursor: zoom-in;
+  border-radius: 0.375rem;
+}
+
+.dp-zoom-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Extra room at the bottom so the caption sits BELOW the image rather than
+     over its last rows — which is exactly where a table's final row is. */
+  padding: 2rem 2rem 3.75rem;
+  background: rgb(0 0 0 / 85%);
+  cursor: zoom-out;
+  /* Fade in, but respect a reader who asked for less motion. */
+  animation: dp-zoom-fade 120ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dp-zoom-overlay {
+    animation: none;
+  }
+}
+
+@keyframes dp-zoom-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.dp-zoom-overlay img {
+  /* Fit the viewport, never upscale past the captured resolution: a blurry
+     enlargement is worse than the small original. */
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  border-radius: 0.375rem;
+  box-shadow: 0 1rem 3rem rgb(0 0 0 / 50%);
+  cursor: zoom-out;
+}
+
+.dp-zoom-caption {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 70ch;
+  padding: 0.4rem 0.75rem;
+  border-radius: 0.25rem;
+  background: rgb(0 0 0 / 70%);
+  color: #fff;
+  font-size: 0.85rem;
+  text-align: center;
+}

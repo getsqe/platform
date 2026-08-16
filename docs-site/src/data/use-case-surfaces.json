@@ -1,0 +1,204 @@
+{
+  "_about": [
+    "The CLI, MCP and HTTP-API routes to the same functionality each use-case guide",
+    "shows in the portal. Documentation content, kept in the docs site rather than in",
+    "the e2e definitions, which describe only what a capture run executed.",
+    "",
+    "Every entry is checked to EXIST by docs-site/scripts/check-usecase-surfaces.mjs,",
+    "against reference/cli.md, reference/mcp-tools.md and openapi.json — all three of",
+    "which are themselves generated from the product. So a renamed command fails the",
+    "docs build instead of quietly misleading a reader. What the check cannot prove is",
+    "that a command does what the surrounding page says; the pages state that.",
+    "",
+    "An EMPTY list means the surface was searched and genuinely offers nothing — say",
+    "why in `notes`. A MISSING key means nobody has looked yet. The two render",
+    "differently, because they are different claims."
+  ],
+  "sign-in": {
+    "cli": [
+      "chameleon login",
+      "chameleon logout"
+    ],
+    "mcp": [],
+    "api": [
+      "GET /api/platform/v1/auth/login",
+      "POST /api/platform/v1/auth/direct-login",
+      "GET /api/platform/v1/auth/me"
+    ],
+    "notes": {
+      "mcp": "MCP is reached with a token you already hold, so it has no sign-in tool of its own.",
+      "api": "`direct-login` exists for local development and is disabled unless ENABLE_DIRECT_LOGIN is set."
+    }
+  },
+  "browse-catalog": {
+    "cli": [
+      "chameleon data catalog",
+      "chameleon data namespace",
+      "chameleon data table"
+    ],
+    "mcp": [
+      "list_workspace_catalogs",
+      "list_namespaces",
+      "list_tables",
+      "describe_table"
+    ],
+    "api": [
+      "GET /api/platform/v1/catalogs",
+      "GET /api/platform/v1/catalogs/{catalog_name}/namespaces/{namespace_path}/tables"
+    ]
+  },
+  "run-query": {
+    "cli": [
+      "chameleon data query"
+    ],
+    "mcp": [
+      "query_data"
+    ],
+    "api": [
+      "POST /api/platform/v1/query",
+      "POST /api/platform/v1/query/explain"
+    ],
+    "notes": {
+      "api": "The query runs as the calling identity, so results are filtered by that identity's grants — the same rule the portal follows."
+    }
+  },
+  "grant-access": {
+    "cli": [
+      "chameleon access grant",
+      "chameleon access revoke",
+      "chameleon access show"
+    ],
+    "mcp": [
+      "grant_table_access",
+      "revoke_table_access"
+    ],
+    "api": [
+      "POST /api/platform/v1/access/grant",
+      "POST /api/platform/v1/access/revoke",
+      "GET /api/platform/v1/access/grants"
+    ]
+  },
+  "manage-workspace": {
+    "cli": [
+      "chameleon workspace create",
+      "chameleon workspace list",
+      "chameleon workspace show"
+    ],
+    "mcp": [
+      "create_workspace",
+      "list_workspaces",
+      "show_workspace"
+    ],
+    "api": [
+      "GET /api/platform/v1/workspaces",
+      "PUT /api/platform/v1/workspaces/{slug}"
+    ],
+    "notes": {
+      "api": "Creation is a PUT on the slug, and it is idempotent — the same request twice yields one workspace."
+    }
+  },
+  "service-principal": {
+    "cli": [],
+    "mcp": [],
+    "api": [
+      "POST /api/platform/v1/service-principals",
+      "GET /api/platform/v1/service-principals",
+      "POST /api/platform/v1/service-principals/{name}/rotate-secret"
+    ],
+    "notes": {
+      "cli": "No `chameleon` command manages service principals.",
+      "mcp": "No MCP tool manages service principals either — the portal and the HTTP API are the only two routes, so automation has to call the API."
+    }
+  },
+  "triggers": {
+    "cli": [
+      "chameleon trigger create",
+      "chameleon trigger list",
+      "chameleon trigger connection",
+      "chameleon trigger test",
+      "chameleon trigger runs"
+    ],
+    "mcp": [],
+    "api": [
+      "POST /api/platform/v1/triggers",
+      "POST /api/platform/v1/triggers/{trigger_id}/test",
+      "GET /api/platform/v1/triggers/runs"
+    ],
+    "notes": {
+      "mcp": "No trigger tool is exposed to MCP.",
+      "api": "These are the ws-admin endpoints, which take an `X-Workspace` header. They are not the machine-facing `POST /triggers/{id}/events` endpoint a caller fires the trigger with — the portal's Connect dialog generates a worked example of that one."
+    }
+  },
+  "platform-health": {
+    "cli": [
+      "chameleon admin health"
+    ],
+    "mcp": [
+      "platform_status"
+    ],
+    "api": [
+      "GET /api/platform/v1/health",
+      "GET /api/platform/v1/system/validate"
+    ]
+  },
+  "dbt-lifecycle": {
+    "cli": [
+      "chameleon dbt list",
+      "chameleon dbt show",
+      "chameleon dbt run"
+    ],
+    "mcp": [
+      "list_projects",
+      "get_project",
+      "run_dbt_project",
+      "list_dbt_runs",
+      "get_dbt_run"
+    ],
+    "api": [
+      "POST /api/platform/v1/connections",
+      "POST /api/platform/v1/dbt/projects",
+      "GET /api/platform/v1/dbt/projects"
+    ],
+    "notes": {
+      "cli": "`chameleon dbt run` runs a project that already exists. Creating the git connection and the project itself is the portal or the API."
+    }
+  },
+  "notebook-analysis": {
+    "cli": [
+      "chameleon notebook list",
+      "chameleon notebook get",
+      "chameleon notebook put",
+      "chameleon notebook kernel",
+      "chameleon notebook execution"
+    ],
+    "mcp": [
+      "list_notebooks",
+      "get_notebook"
+    ],
+    "api": [
+      "GET /api/platform/v1/notebooks/docs",
+      "PUT /api/platform/v1/notebooks/docs/{path}",
+      "POST /api/platform/v1/notebooks/kernels"
+    ],
+    "notes": {
+      "api": "The kernel endpoint starts one for the workspace. A first start can fail and need retrying — the portal retries for you, a direct caller must."
+    }
+  },
+  "audit-trail": {
+    "cli": [
+      "chameleon admin audit",
+      "chameleon access audit"
+    ],
+    "mcp": [],
+    "api": [
+      "GET /api/platform/v1/audit",
+      "GET /api/platform/v1/access/audit",
+      "GET /api/platform/v1/security/alerts",
+      "POST /api/platform/v1/security/digests/preview"
+    ],
+    "notes": {
+      "mcp": "No MCP tool reads the audit trail. That is deliberate rather than missing: an assistant that can read every access record is a different risk from one that can read data it has been granted.",
+      "api": "Events are emitted in OCSF, the schema SIEM tools consume, so the forwarder feeds an existing pipeline rather than requiring a bespoke integration."
+    }
+  }
+}

@@ -24,6 +24,24 @@ cp -R docs-site/dist/. dist/docs/
 # link. The marketing site emits no sitemap of its own, so simply drop these.
 rm -f dist/docs/sitemap-index.xml dist/docs/sitemap-0.xml
 
+# Starlight injects <link rel="sitemap"> into every page's <head>. We delete
+# the sitemap itself above, so leaving the tag would ship a 404 reference on
+# all ~534 pages. Strip it so "no sitemap anywhere" is actually true. This
+# runs every build, since the docs build regenerates dist/docs from scratch.
+find dist/docs -name '*.html' -print0 \
+  | xargs -0 sed -i '' -E 's#<link rel="sitemap"[^>]*/>##g'
+
+# grep -l exits 1 on zero matches (the expected outcome here); under
+# pipefail that would otherwise kill the script via set -e before this
+# check can report anything, so neutralize the pipeline's exit status —
+# the count itself is unaffected.
+remaining_sitemap_refs="$( { grep -rl 'rel="sitemap"' dist/docs --include='*.html' || true; } | wc -l | tr -d ' ')"
+if [ "$remaining_sitemap_refs" != "0" ]; then
+  echo "✗ $remaining_sitemap_refs docs page(s) still reference a sitemap after stripping" >&2
+  exit 1
+fi
+echo "  stripped sitemap tag from all docs pages (0 remaining references)"
+
 echo "→ leak-scan gate over the composed output"
 bash scripts/leak-scan.sh dist
 

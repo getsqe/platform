@@ -5,7 +5,7 @@ sidebar:
   order: 2
 ---
 
-<!-- GENERATED FILE — do not edit. See docs-site/scripts/gen-mcp-reference.mjs -->
+<!-- GENERATED FILE — do not edit. Regenerate from source instead. -->
 
 The platform runs an MCP server at `/mcp`. Tools act **as the calling user** —
 the verified user token is threaded to each call — so an agent sees exactly the

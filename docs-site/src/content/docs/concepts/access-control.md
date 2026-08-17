@@ -5,8 +5,7 @@ sidebar:
   order: 3
 ---
 
-{/* GENERATED from docs/access-management.md by docs-site/scripts/gen-concepts-from-repo.mjs.
-    Edit that file, not this one. */}
+<!-- Generated file. Do not edit directly; regenerate from source instead. -->
 
 How data-access grants are authored, stored, and enforced on the platform.
 This is the reference for operators, integrators (Terraform/MCP/CLI), and

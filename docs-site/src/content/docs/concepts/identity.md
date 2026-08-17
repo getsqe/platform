@@ -6,7 +6,7 @@ sidebar:
 ---
 
 Authorization — *what may this identity do* — is a separate question, covered in
-[Access control](/concepts/access-control/). This page is about **identity**: what a caller is
+[Access control](/docs/concepts/access-control/). This page is about **identity**: what a caller is
 *called*, and why that is where the expensive failures are. An identity that
 authenticates perfectly but arrives under the wrong name is indistinguishable,
 from the outside, from one that simply has no grant.
@@ -26,7 +26,7 @@ rather than inventing its own directory:
 are fully supported — they can be created and granted like any other identity, and
 an existing IdP client can be granted directly — but they are the second choice,
 for the case where no person is present. See [System access with service
-principals](/guides/service-principals/).
+principals](/docs/guides/service-principals/).
 
 The reason for the preference is that only the user path keeps the end user's
 identity intact all the way to Ranger, which is what makes grants, row filters and
@@ -75,7 +75,7 @@ admin before drawing conclusions from a 404.
 
 Service principals exist for **systems**. They are not a way to give a person
 access — see [System access with service
-principals](/guides/service-principals/) for why that trade is a bad one.
+principals](/docs/guides/service-principals/) for why that trade is a bad one.
 
 A `client_credentials` token has both, and they are not the same:
 

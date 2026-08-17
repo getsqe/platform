@@ -5,7 +5,7 @@ sidebar:
   order: 3
 ---
 
-<!-- GENERATED FILE - do not edit. See docs-site/scripts/gen-cli-reference.mjs -->
+<!-- GENERATED FILE - do not edit. Regenerate from source instead. -->
 
 The `chameleon` CLI is the supported way to drive the platform from a script.
 Every end-to-end test under `quickstart/` goes through it rather than calling the

@@ -10,7 +10,7 @@ Everything on this page grants to a **user or a group**. That is deliberate and 
 is the normal path — the end user's identity reaches Ranger, so the grant, any row
 filter, and the audit record all name the actual person.
 
-Reach for a [service principal](/guides/service-principals/) only when there is no
+Reach for a [service principal](/docs/guides/service-principals/) only when there is no
 person: an engine, a scheduler, an external pipeline. Giving a human one collapses
 per-user authorization into a shared secret.
 :::
@@ -69,7 +69,7 @@ chameleon data query --engine flight "SELECT count(*) FROM ws_team_a.sales.order
 The catalog fails closed, so an unauthorized read can surface as **table not
 found** rather than a permission error. Treat a missing row count as *denied*,
 not as *absent* — and confirm the table exists as an admin before drawing any
-conclusion from a 404. `verify-polaris-oidc-roles.sh` encodes exactly this rule.
+conclusion from a 404.
 :::
 
 ## Groups and roles

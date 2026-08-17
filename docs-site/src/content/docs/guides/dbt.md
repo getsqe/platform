@@ -133,8 +133,8 @@ chameleon workspace delete analytics-demo --yes
 
 This guide covers the dbt project lifecycle: scaffold, seed, compile, run, test.
 
-Scheduling a dbt run is covered in [Orchestration](/concepts/orchestration/). Lineage shows up
-in passing in the [data engineer tutorial](/guides/tutorials/data-engineer/) and the
-[dbt lifecycle use case](/guides/use-cases/dbt-lifecycle/), but isn't documented here. Dbt
+Scheduling a dbt run is covered in [Orchestration](/docs/concepts/orchestration/). Lineage shows up
+in passing in the [data engineer tutorial](/docs/guides/tutorials/data-engineer/) and the
+[dbt lifecycle use case](/docs/guides/use-cases/dbt-lifecycle/), but isn't documented here. Dbt
 sessions (the interactive editing surface behind the UI) and sources and freshness aren't
 documented anywhere yet.

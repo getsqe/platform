@@ -23,8 +23,8 @@ supported and can be created or granted like any other identity — an existing 
 client can be granted directly — but they are the second choice, for when there is
 no person.
 
-Use [Workspaces and access](/guides/workspaces-and-access/) for people, and the
-[identity model](/concepts/identity/#the-identity-model) for how the mapping works.
+Use [Workspaces and access](/docs/guides/workspaces-and-access/) for people, and the
+[identity model](/docs/concepts/identity/#the-identity-model) for how the mapping works.
 Use this page for systems.
 :::
 
@@ -155,7 +155,7 @@ The fix is to detach the `profile` scope from service-principal clients so the
 hardcoded mapper is the only writer. If a service principal ever returns **401**
 with nothing obviously wrong, decode its token first — this is the cause.
 
-See [Identity](/concepts/identity/) for the full picture.
+See [Identity](/docs/concepts/identity/) for the full picture.
 
 ## Delete
 

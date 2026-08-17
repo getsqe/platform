@@ -5,7 +5,7 @@ sidebar:
   order: 4
 ---
 
-<!-- GENERATED FILE - do not edit. See docs-site/scripts/gen-airflow-reference.py -->
+<!-- GENERATED FILE - do not edit. Regenerate from source instead. -->
 
 `apache-airflow-providers-chameleon` lets an Airflow DAG drive the platform:
 run SQL, trigger dbt, manage projects and wait on results. It is **not published
@@ -16,7 +16,7 @@ Connections use the `chameleon` connection type, registered by the provider.
 Each workspace gets its own connection (`chameleon_<slug>`) backed by a
 workspace-bound service principal, which is what keeps one tenant's DAGs out of
 another's data — see [System access with service
-principals](/guides/service-principals/).
+principals](/docs/guides/service-principals/).
 
 **19 classes.**
 

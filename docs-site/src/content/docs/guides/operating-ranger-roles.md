@@ -22,10 +22,10 @@ Emptying is the half that matters for security, and it works: **an empty role
 matches nobody**. Recreating a workspace with the same slug therefore starts with
 no inherited members.
 
-What is missing is only the tidy-up. `clients/ranger.py` has `ensure_role_exists`
-and `ensure_role`, and no delete — so the empty shells accumulate. On the stack
-this was written against, **32 of 36** workspace-shaped roles belonged to
-workspaces that no longer existed.
+What is missing is only the tidy-up. The platform's Ranger client can ensure a
+role exists and keep it in sync, but has no delete operation — so the empty
+shells accumulate. On the stack this was written against, **32 of 36**
+workspace-shaped roles belonged to workspaces that no longer existed.
 
 That is noise, not exposure. It makes role listings hard to read and makes a real
 problem harder to spot.

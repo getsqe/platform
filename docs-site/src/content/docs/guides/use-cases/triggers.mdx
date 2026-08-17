@@ -63,11 +63,11 @@ built, which is a weaker guarantee. Follow the links for arguments and options.
 
 ### Command line
 
-- [`chameleon trigger create`](/reference/cli/)
-- [`chameleon trigger list`](/reference/cli/)
-- [`chameleon trigger connection`](/reference/cli/)
-- [`chameleon trigger test`](/reference/cli/)
-- [`chameleon trigger runs`](/reference/cli/)
+- [`chameleon trigger create`](/docs/reference/cli/)
+- [`chameleon trigger list`](/docs/reference/cli/)
+- [`chameleon trigger connection`](/docs/reference/cli/)
+- [`chameleon trigger test`](/docs/reference/cli/)
+- [`chameleon trigger runs`](/docs/reference/cli/)
 
 ### MCP tools
 
@@ -75,8 +75,8 @@ No trigger tool is exposed to MCP.
 
 ### HTTP API (for developers)
 
-- [`POST /api/platform/v1/triggers`](/reference/api/operations/create_trigger_api_platform_v1_triggers_post/)
-- [`POST /api/platform/v1/triggers/{trigger_id}/test`](/reference/api/operations/test_fire_trigger_api_platform_v1_triggers__trigger_id__test_post/)
-- [`GET /api/platform/v1/triggers/runs`](/reference/api/operations/get_trigger_runs_api_platform_v1_triggers_runs_get/)
+- [`POST /api/platform/v1/triggers`](/docs/reference/api/operations/create_trigger_api_platform_v1_triggers_post/)
+- [`POST /api/platform/v1/triggers/{trigger_id}/test`](/docs/reference/api/operations/test_fire_trigger_api_platform_v1_triggers__trigger_id__test_post/)
+- [`GET /api/platform/v1/triggers/runs`](/docs/reference/api/operations/get_trigger_runs_api_platform_v1_triggers_runs_get/)
 
 These are the ws-admin endpoints, which take an `X-Workspace` header. They are not the machine-facing `POST /triggers/{id}/events` endpoint a caller fires the trigger with — the portal's Connect dialog generates a worked example of that one.

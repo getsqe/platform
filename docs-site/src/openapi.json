@@ -17604,7 +17604,7 @@
           "access-control"
         ],
         "summary": "List Access Types",
-        "description": "The vocabulary for advanced-mode grants, straight from Ranger's service definition.\n\nServed so no client has to hardcode it \u2014 a UI list that drifts from the servicedef\nwould offer access types Ranger rejects, and the platform already generates this from\n``servicedef-polaris.json``. ``privileges`` is the grouped (normal-mode) vocabulary.\n\n``implied`` lets a client show what a seed will actually expand to, which is the part\nthat surprises people: Polaris does not apply impliedGrants itself, so a grant of\n``table-data-read`` is stored as three access types.",
+        "description": "The vocabulary for advanced-mode grants, straight from Ranger's service definition.\n\nServed so no client has to hardcode it \u2014 a UI list that drifts from the servicedef\nwould offer access types Ranger rejects, and the platform already generates this from\nRanger's own service definition for Polaris. ``privileges`` is the grouped\n(normal-mode) vocabulary.\n\n``implied`` lets a client show what a seed will actually expand to, which is the part\nthat surprises people: Polaris does not apply impliedGrants itself, so a grant of\n``table-data-read`` is stored as three access types.",
         "operationId": "list_access_types_api_platform_v1_access_access_types_get",
         "parameters": [
           {
@@ -34293,7 +34293,7 @@
         },
         "type": "object",
         "title": "TrustProfileBody",
-        "description": "Validated request body for ``PUT .../sources/{id}/trust``.\n\nA trust profile is a flat ``{facet_name: int_score}`` map: keys are\nOpenLineage facet names (or the literal ``other`` fallback key), values\nare non-negative integers on the 0\u2013200 scale (see\n``bootstrap/trust_defaults.py``). Anything else \u2014 nested objects, string\nscores, stray fields like ``producer_regex`` \u2014 gets a 422 from FastAPI's\nPydantic validation, so a steward following stale docs cannot silently\noverwrite ``trust_profile`` with garbage that the trust resolver would\nthen treat as ``{}`` (and fall back to 50 for every facet)."
+        "description": "Validated request body for ``PUT .../sources/{id}/trust``.\n\nA trust profile is a flat ``{facet_name: int_score}`` map: keys are\nOpenLineage facet names (or the literal ``other`` fallback key), values\nare non-negative integers on the 0\u2013200 scale. Anything else \u2014 nested\nobjects, string scores, stray fields like ``producer_regex`` \u2014 gets a\n422 from FastAPI's Pydantic validation, so a steward following stale\ndocs cannot silently overwrite ``trust_profile`` with garbage that the\ntrust resolver would then treat as ``{}`` (and fall back to 50 for\nevery facet)."
       },
       "TrustUpdateResponse": {
         "properties": {

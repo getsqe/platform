@@ -44,13 +44,13 @@ the UI and an actual query disagree, **the query is authoritative**.
 
 The practical consequence: never conclude you have access because a table is
 listed, and never conclude you lack it because a table is missing. Run the query.
-See [Identity](/concepts/identity/).
+See [Identity](/docs/concepts/identity/).
 :::
 
 ## Where things are
 
 The complete route list is generated from the router — see
-[Web portal routes](/reference/ui-routes/).
+[Web portal routes](/docs/reference/ui-routes/).
 
 ## What is missing here
 
@@ -60,11 +60,11 @@ describes what every screen does or which fields mean what.
 
 The gap is being closed a flow at a time, and only by driving the product:
 inferring behaviour from a component name produces documentation that reads well
-and misleads. The [use-case guides](/guides/use-cases/) are generated from a
+and misleads. The [use-case guides](/docs/guides/use-cases/) are generated from a
 capture run against a live stack, so their steps are steps a test executed and
 their screenshots are what it saw — the core flows are covered there, with
 images. Longer journeys are written up as guides: [Transform data with
-dbt](/guides/dbt/) and [Workspaces and access](/guides/workspaces-and-access/).
+dbt](/docs/guides/dbt/) and [Workspaces and access](/docs/guides/workspaces-and-access/).
 
 With 66 routes, documenting the remainder is still a body of work in its own
 right.

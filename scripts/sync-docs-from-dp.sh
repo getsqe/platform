@@ -86,8 +86,22 @@ echo "→ sanitizing synced copies (source untouched)"
 # NOT in scope and must stay untouched; anchoring to `^title: ...$` guarantees
 # that (it cannot match mid-sentence prose or a differently-worded heading).
 # Do not broaden this to a bare `Chameleon` substitution.
+#
+# BASE-PATH REWRITE (the last two rules below). The source docs are authored for
+# a site served at `/` and use root-absolute internal links — `](/reference/cli/)`
+# in prose, and `link:` fields in the landing page's hero frontmatter. We serve
+# under `base: '/docs'`, and Astro does NOT rewrite absolute links appearing in
+# CONTENT; it only bases the URLs it generates itself. Without this, those links
+# 404 — clicking "API reference" from /docs/ went to /reference/api/. That was
+# found in production, not by the build or the gate.
+#
+# Scoped to the four real docs sections, so external URLs, anchors, an unrelated
+# root link (e.g. /pricing/ on the marketing site) and an already-based
+# /docs/... link are all untouched — the last of which also makes it idempotent.
 while IFS= read -r -d '' f; do
   sed -i '' -E \
+    -e 's#\((/(start|concepts|guides|reference)/)#(/docs\1#g' \
+    -e 's#(link:[[:space:]]*)(/(start|concepts|guides|reference)/)#\1/docs\2#g' \
     -e 's#chameleon\.local#platform.example#g' \
     -e 's#realms/[A-Za-z0-9_-]+#realms/example#g' \
     -e 's#s3\.eu-(central|west|north)-[0-9]\.amazonaws\.com#s3.eu-example-1.aws-endpoint.com#g' \

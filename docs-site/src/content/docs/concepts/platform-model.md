@@ -62,7 +62,7 @@ Several behaviours that look arbitrary are consequences of this model:
   will reject it rather than guess.
 - **Access is granted against this hierarchy.** A grant names a catalog, a
   namespace or a table — and grants at a higher level do not always imply the
-  traversal a query needs. See [Access control](/concepts/access-control/).
+  traversal a query needs. See [Access control](/docs/concepts/access-control/).
 
 ## What a workspace is not
 
@@ -77,9 +77,9 @@ Several behaviours that look arbitrary are consequences of this model:
 
 ## Where to go next
 
-- [Identity](/concepts/identity/) — what a caller is *called* at each hop, which
+- [Identity](/docs/concepts/identity/) — what a caller is *called* at each hop, which
   is where the expensive failures happen.
-- [Access control](/concepts/access-control/) — how a grant becomes an enforced
+- [Access control](/docs/concepts/access-control/) — how a grant becomes an enforced
   decision.
-- [Set up a workspace for a team](/guides/tutorials/platform-engineer/) — the
+- [Set up a workspace for a team](/docs/guides/tutorials/platform-engineer/) — the
   same model, applied.

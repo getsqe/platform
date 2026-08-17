@@ -73,7 +73,7 @@ git repository into managed tables, and something else decides when to run it:
 you in the browser, a trigger, a schedule, or `chameleon dbt run`.
 
 It runs **as the person who asked**, against that workspace's catalog. See
-[Build and test a dbt project](/guides/use-cases/dbt-lifecycle/).
+[Build and test a dbt project](/docs/guides/use-cases/dbt-lifecycle/).
 
 ## Airflow — orchestrate across systems
 
@@ -99,9 +99,9 @@ whether Airflow is the right home for the work.
 
 ## Where to go next
 
-- [Fire a task from an external event](/guides/use-cases/triggers/) — a trigger,
+- [Fire a task from an external event](/docs/guides/use-cases/triggers/) — a trigger,
   end to end, with screenshots.
-- [Build your first pipeline](/guides/tutorials/data-engineer/) — dbt and a
+- [Build your first pipeline](/docs/guides/tutorials/data-engineer/) — dbt and a
   trigger together.
-- [The platform model](/concepts/platform-model/) — why workspace-scoped work
+- [The platform model](/docs/concepts/platform-model/) — why workspace-scoped work
   defaults to the workspace's catalog.

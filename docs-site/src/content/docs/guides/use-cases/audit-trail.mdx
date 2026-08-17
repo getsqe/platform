@@ -36,8 +36,8 @@ built, which is a weaker guarantee. Follow the links for arguments and options.
 
 ### Command line
 
-- [`chameleon admin audit`](/reference/cli/)
-- [`chameleon access audit`](/reference/cli/)
+- [`chameleon admin audit`](/docs/reference/cli/)
+- [`chameleon access audit`](/docs/reference/cli/)
 
 ### MCP tools
 
@@ -45,9 +45,9 @@ No MCP tool reads the audit trail. That is deliberate rather than missing: an as
 
 ### HTTP API (for developers)
 
-- [`GET /api/platform/v1/audit`](/reference/api/operations/get_audit_log_api_platform_v1_audit_get/)
-- [`GET /api/platform/v1/access/audit`](/reference/api/operations/audit_access_api_platform_v1_access_audit_get/)
-- [`GET /api/platform/v1/security/alerts`](/reference/api/operations/list_alerts_api_platform_v1_security_alerts_get/)
-- [`POST /api/platform/v1/security/digests/preview`](/reference/api/operations/preview_audit_digest_api_platform_v1_security_digests_preview_post/)
+- [`GET /api/platform/v1/audit`](/docs/reference/api/operations/get_audit_log_api_platform_v1_audit_get/)
+- [`GET /api/platform/v1/access/audit`](/docs/reference/api/operations/audit_access_api_platform_v1_access_audit_get/)
+- [`GET /api/platform/v1/security/alerts`](/docs/reference/api/operations/list_alerts_api_platform_v1_security_alerts_get/)
+- [`POST /api/platform/v1/security/digests/preview`](/docs/reference/api/operations/preview_audit_digest_api_platform_v1_security_digests_preview_post/)
 
 Events are emitted in OCSF, the schema SIEM tools consume, so the forwarder feeds an existing pipeline rather than requiring a bespoke integration.

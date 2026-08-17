@@ -5,7 +5,7 @@ sidebar:
   order: 5
 ---
 
-<!-- GENERATED FILE - do not edit. See docs-site/scripts/gen-ui-reference.mjs -->
+<!-- GENERATED FILE - do not edit. Regenerate from source instead. -->
 
 The portal is organised into a handful of top-level areas. Paths with a
 `:parameter` segment are detail views reached by clicking through from a list.

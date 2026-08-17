@@ -62,8 +62,8 @@ way you would back up any storage.
 
 ## Where to go next
 
-- [The platform model](/concepts/platform-model/) — how a table's place in the
+- [The platform model](/docs/concepts/platform-model/) — how a table's place in the
   hierarchy decides where it is stored.
-- [Query engines](/concepts/engines/) — three engines over this one copy.
-- [Browse the data catalog](/guides/use-cases/browse-catalog/) — reading a
+- [Query engines](/docs/concepts/engines/) — three engines over this one copy.
+- [Browse the data catalog](/docs/guides/use-cases/browse-catalog/) — reading a
   table's schema and metadata in the portal.

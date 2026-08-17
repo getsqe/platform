@@ -12,7 +12,7 @@ here. Where a term has a platform-specific meaning, that meaning wins.
 
 **Workspace** — the unit of tenancy. Owns exactly one catalog, its own storage
 buckets, and the Keycloak groups that administer and use it. See
-[The platform model](/concepts/platform-model/).
+[The platform model](/docs/concepts/platform-model/).
 
 **Catalog** — the top of the data hierarchy, and the first part of a three-part
 SQL name. A workspace's catalog name is *derived* from its slug:

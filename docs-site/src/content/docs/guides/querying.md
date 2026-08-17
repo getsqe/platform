@@ -70,7 +70,7 @@ trip; subsequent reads inside the cache window do not.
 
 That cache is also why a **revoke** may not take effect immediately for a user who
 has already read the table — see
-[Workspaces and access](/guides/workspaces-and-access/#revoking).
+[Workspaces and access](/docs/guides/workspaces-and-access/#revoking).
 
 ## When a query says the table does not exist
 

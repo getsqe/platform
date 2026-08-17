@@ -62,9 +62,9 @@ want to decide for you when the work genuinely differs.
 
 ## Where to go next
 
-- [Run a query](/guides/use-cases/run-query/) — the query editor, with the CLI,
+- [Run a query](/docs/guides/use-cases/run-query/) — the query editor, with the CLI,
   MCP and API equivalents.
-- [Access control](/concepts/access-control/) — how a grant becomes an enforced
+- [Access control](/docs/concepts/access-control/) — how a grant becomes an enforced
   decision, and where enforcement happens.
-- [The platform model](/concepts/platform-model/) — why one catalog serves every
+- [The platform model](/docs/concepts/platform-model/) — why one catalog serves every
   engine.

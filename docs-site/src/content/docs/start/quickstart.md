@@ -49,5 +49,5 @@ healthy even though the process is fine.
 
 ## What next
 
-- [Transform data with dbt](/guides/dbt/) — the shortest path to something real
-- [Identity](/concepts/identity/) — read this before debugging any 401 or 403
+- [Transform data with dbt](/docs/guides/dbt/) — the shortest path to something real
+- [Identity](/docs/concepts/identity/) — read this before debugging any 401 or 403

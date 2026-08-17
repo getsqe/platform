@@ -20,8 +20,8 @@ human: by name, with real grants, subject to the same fail-closed rules.
 This is the step people skip. A DAG with no connection configured for its workspace
 doesn't fail at authoring time — it fails days later as "Airflow can't see my table,"
 which is a grant problem wearing an Airflow costume. See [System access with service
-principals](/guides/service-principals/) for what a service principal is and is not
-for, and [Workspaces and access](/guides/workspaces-and-access/) for how Ranger grants
+principals](/docs/guides/service-principals/) for what a service principal is and is not
+for, and [Workspaces and access](/docs/guides/workspaces-and-access/) for how Ranger grants
 work in general.
 
 ## 1. Create the workspace
@@ -228,5 +228,5 @@ chameleon access grant --user sp-airflow-energy-co \
 ```
 
 If a DAG gets a 401 instead of a 403, that's the identity claim, not the grant — see
-the [identity trap](/guides/service-principals/#the-identity-trap) in the service
+the [identity trap](/docs/guides/service-principals/#the-identity-trap) in the service
 principals guide before assuming the token itself is broken.

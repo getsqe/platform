@@ -19,6 +19,12 @@ mkdir -p dist/docs
 # The docs build already emits /docs-prefixed URLs; its dist root maps to /docs.
 cp -R docs-site/dist/. dist/docs/
 
+# Starlight references /docs/favicon.svg on every page, but the icon lives in
+# the MARKETING site's public/ — and docs-site/public/ is rsync --delete'd from
+# the source, so a copy placed there would be wiped on the next sync. Copy it at
+# compose time instead. Without this, all ~534 docs pages 404 on their favicon.
+cp dist/favicon.svg dist/docs/favicon.svg
+
 # Starlight emits a sitemap because `site` is set, and a sitemap would list
 # every page we just marked noindex — advertising exactly what we chose not to
 # link. The marketing site emits no sitemap of its own, so simply drop these.

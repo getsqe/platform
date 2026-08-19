@@ -15,6 +15,15 @@ person: an engine, a scheduler, an external pipeline. Giving a human one collaps
 per-user authorization into a shared secret.
 :::
 
+## Before you start
+
+**You need** platform-admin rights and **two** identities — one to grant to, one to
+stay ungranted. The second is not optional here: a grant that appears to work proves
+nothing until someone who lacks it is refused.
+
+**You end up with** a workspace, a grant you have watched succeed, and a denial you
+have watched happen.
+
 A **workspace** is the unit of tenancy. Creating one provisions a dedicated
 catalog, the Keycloak groups that back its admin and member roles, and the Ranger
 roles those groups map to.
@@ -111,3 +120,12 @@ Deprovisioning removes the workspace, its catalog and its groups.
 ```sh frame="terminal"
 chameleon workspace delete team-a --yes
 ```
+
+## Related
+
+- [Tenancy and isolation](/docs/concepts/multi-tenancy/) — which layer is actually a
+  boundary, and where isolation is soft.
+- [Access control](/docs/concepts/access-control/) — how a grant becomes an enforced
+  decision.
+- [Keeping Ranger tidy](/docs/guides/operating-ranger-roles/) — what deprovisioning
+  leaves behind.

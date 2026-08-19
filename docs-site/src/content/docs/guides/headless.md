@@ -10,7 +10,7 @@ the opposite case: a workspace that is created once, then driven entirely by DAG
 CLI does the one-time bootstrap; `apache-airflow-providers-chameleon` does the rest —
 SQL, dbt runs, and anything that reaches the platform's own API surface.
 
-## What you need
+## Before you start
 
 Every Chameleon operator and sensor authenticates through an Airflow **connection**,
 and that connection is backed by a **service principal** — a Keycloak confidential
@@ -230,3 +230,12 @@ chameleon access grant --user sp-airflow-energy-co \
 If a DAG gets a 401 instead of a 403, that's the identity claim, not the grant — see
 the [identity trap](/docs/guides/service-principals/#the-identity-trap) in the service
 principals guide before assuming the token itself is broken.
+
+## Related
+
+- [Making work happen](/docs/concepts/orchestration/) — the choice between triggers,
+  schedules, dbt and Airflow, and why Airflow comes last.
+- [Airflow provider reference](/docs/reference/airflow/) — every operator and sensor,
+  generated from the vendored provider.
+- [System access with service principals](/docs/guides/service-principals/) — the
+  identity every connection here is backed by.

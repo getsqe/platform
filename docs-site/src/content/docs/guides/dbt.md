@@ -138,3 +138,11 @@ in passing in the [data engineer tutorial](/docs/guides/tutorials/data-engineer/
 [dbt lifecycle use case](/docs/guides/use-cases/dbt-lifecycle/), but isn't documented here. Dbt
 sessions (the interactive editing surface behind the UI) and sources and freshness aren't
 documented anywhere yet.
+
+## Related
+
+- [Making work happen](/docs/concepts/orchestration/) — when to reach for a trigger, a
+  schedule, or Airflow instead of running it by hand.
+- [Build and test a dbt project](/docs/guides/use-cases/dbt-lifecycle/) — the same
+  lifecycle in the portal, with screenshots.
+- [Driving the platform headless](/docs/guides/headless/) — the same runs from Airflow.

@@ -11,6 +11,19 @@ description: "A workspace is the unit of tenancy: it owns a catalog, its own sto
 
 A workspace is the unit of tenancy: it owns a catalog, its own storage buckets, and the Keycloak groups whose members administer or use it. One catalog belongs to exactly one workspace, which is what keeps tenants separated in the data plane.
 
+Creating a workspace is not just a row in a list. The slug you choose becomes the
+name of everything the workspace gets: its own catalog, its storage (a warehouse
+bucket and a staging bucket), and two groups — `ws-<slug>-admins` and
+`ws-<slug>-members` — which are what membership actually means.
+
+That is why the slug is worth a moment's thought: it is visible in table names,
+in storage paths and in group names afterwards.
+
+The split between the two groups is the one to understand. A **member** can use
+the workspace. An **admin** can manage its members and grant access on its own
+catalog — and only on its own catalog. What that does and does not isolate is in
+[tenancy and isolation](/docs/concepts/multi-tenancy/).
+
 **Who does this:** admin
 
 ## Steps

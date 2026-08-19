@@ -33,6 +33,15 @@ using the `client_credentials` grant, with its own least-privilege Ranger
 policies. It exists for the case where there is genuinely no person present — an
 engine, a scheduler, an external pipeline.
 
+## Before you start
+
+**You need** platform-admin rights, the workspace decided **in advance** (the
+binding is set at creation and nothing updates it), and somewhere to put the client
+secret before you close the response — it is shown once.
+
+**You end up with** a client-credentials identity that Ranger authorizes by name,
+scoped to what it actually needs.
+
 ## Prefer generating them over creating them by hand
 
 The healthy pattern is that a service principal is **provisioned as part of
@@ -87,6 +96,53 @@ curl -X POST "$API/service-principals" \
 
 The secret really is shown once. `POST /service-principals/{name}/rotate-secret`
 issues a new one if it is lost.
+
+## Bind it to a workspace
+
+A service principal is platform-scoped by default. Passing `workspace` at creation
+binds it to one:
+
+```sh frame="terminal"
+curl -X POST "$API/service-principals" \
+  -H "Authorization: Bearer $ADMIN_TOKEN" \
+  -H 'Content-Type: application/json' \
+  -d '{
+        "name": "orders-loader",
+        "served_catalogs": ["ws_analytics"],
+        "mode": "read",
+        "workspace": "analytics"
+      }'
+```
+
+In the portal the same field is a **Workspace** picker on the create form, whose
+default is *(none — platform)*.
+
+**What the binding is for.** A trigger's event endpoint accepts a client-credentials
+token only from a principal bound to that trigger's workspace, and it fails closed:
+an unbound principal — or one bound elsewhere — is refused even with a valid token
+and the right secret. If a trigger returns an authorization failure while the token
+itself is fine, this is the first thing to check. The caller is identified from its
+own token, so the principal that authenticates has to be the bound one; a second
+principal calling on its behalf is not the same thing.
+
+:::caution[Set it at creation — it cannot be changed later]
+No endpoint updates the binding. `rotate-secret` issues a new secret and `rescope`
+adjusts catalog scope, but neither touches the workspace. Getting it wrong means
+deleting the principal and creating it again, which means re-distributing the
+secret — so decide the workspace before you create it.
+:::
+
+Leave it unset for anything that is genuinely platform-wide, such as an engine
+serving every catalog. A binding is not a grant: it decides which triggers a
+principal may fire, not what data it can read. That is still
+[access control](/docs/concepts/access-control/), and it applies to a service principal
+exactly as it does to a person.
+
+:::note
+There is no `chameleon` command for service principals — the portal and this HTTP
+API are the two supported paths. Automation therefore calls the API directly, as
+above, rather than shelling out to the CLI.
+:::
 
 ## What gets created
 
@@ -164,3 +220,11 @@ Deletion removes the identity from all three planes:
 ```sh frame="terminal"
 curl -X DELETE "$API/service-principals/reporting-tool" -H "Authorization: Bearer $ADMIN_TOKEN"
 ```
+
+## Related
+
+- [Identity](/docs/concepts/identity/) — what authenticates, and what each claim is for.
+- [Workspaces and access](/docs/guides/workspaces-and-access/) — granting to people,
+  which is the normal path.
+- [Driving the platform headless](/docs/guides/headless/) — the main consumer of these
+  identities.

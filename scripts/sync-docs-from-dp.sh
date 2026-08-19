@@ -87,9 +87,12 @@ echo "→ sanitizing synced copies (source untouched)"
 # that (it cannot match mid-sentence prose or a differently-worded heading).
 # Do not broaden this to a bare `Chameleon` substitution.
 #
-# BASE-PATH REWRITE (the last two rules below). The source docs are authored for
-# a site served at `/` and use root-absolute internal links — `](/reference/cli/)`
-# in prose, and `link:` fields in the landing page's hero frontmatter. We serve
+# BASE-PATH REWRITE (the first three rules below). The source docs are authored
+# for a site served at `/` and use root-absolute internal links in THREE forms:
+# `](/reference/cli/)` in prose, `link:` fields in hero frontmatter, and raw
+# `href="/guides/..."` attributes in the landing page's role-routing cards. All
+# three need covering — the href form was missed first time round and shipped 4
+# more 404s. We serve
 # under `base: '/docs'`, and Astro does NOT rewrite absolute links appearing in
 # CONTENT; it only bases the URLs it generates itself. Without this, those links
 # 404 — clicking "API reference" from /docs/ went to /reference/api/. That was
@@ -102,6 +105,7 @@ while IFS= read -r -d '' f; do
   sed -i '' -E \
     -e 's#\((/(start|concepts|guides|reference)/)#(/docs\1#g' \
     -e 's#(link:[[:space:]]*)(/(start|concepts|guides|reference)/)#\1/docs\2#g' \
+    -e 's#href="(/(start|concepts|guides|reference)/)#href="/docs\1#g' \
     -e 's#chameleon\.local#platform.example#g' \
     -e 's#realms/[A-Za-z0-9_-]+#realms/example#g' \
     -e 's#s3\.eu-(central|west|north)-[0-9]\.amazonaws\.com#s3.eu-example-1.aws-endpoint.com#g' \

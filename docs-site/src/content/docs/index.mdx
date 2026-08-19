@@ -8,12 +8,15 @@ hero:
     - text: Start here
       link: /docs/start/quickstart/
       icon: right-arrow
+    - text: Pick a tutorial for your role
+      link: /docs/guides/tutorials/
+      variant: minimal
     - text: REST API reference
       link: /docs/reference/api/
       variant: minimal
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components'
+import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components'
 
 <CardGrid stagger>
   <Card title="Per-user authorization" icon="approve-check">
@@ -34,6 +37,41 @@ import { Card, CardGrid } from '@astrojs/starlight/components'
     user's own permissions — not an admin token.
   </Card>
 </CardGrid>
+
+## Start where you stand
+
+Each tutorial goes from nothing to a working result, in order, with no decisions to
+make on the way. They are assembled from flows that were executed against a live
+platform, so the steps are steps that ran and the screenshots are what they saw.
+
+<CardGrid>
+  <LinkCard
+    title="I am deciding whether to use this"
+    description="What the platform is, in plain language. No technical background needed."
+    href="/docs/guides/tutorials/evaluating-the-platform/"
+  />
+  <LinkCard
+    title="I am a data engineer"
+    description="Build your first pipeline: a table, a dbt project, a run you can see the lineage of."
+    href="/docs/guides/tutorials/data-engineer/"
+  />
+  <LinkCard
+    title="I am a data scientist"
+    description="From a table to a tracked experiment, in a notebook with MLflow already wired."
+    href="/docs/guides/tutorials/data-scientist/"
+  />
+  <LinkCard
+    title="I run the platform"
+    description="Set up a workspace for a team: catalog, members, grants, and how to check them."
+    href="/docs/guides/tutorials/platform-engineer/"
+  />
+</CardGrid>
+
+Each says how long it takes on [the tutorials page](/docs/guides/tutorials/).
+
+Prefer to understand before you click? [The concepts](/docs/concepts/platform-model/)
+explain the platform model, access control, engines, storage, tenancy and the AI
+surfaces — and every guide gets shorter once you have read them.
 
 ## About this site
 

@@ -44,6 +44,24 @@ is optional.
 
 ## Review log
 
+**2026-08-19 — PASS (23 of 30 re-captured upstream; all 23 reviewed individually).**
+Source commit: "re-capture the manual against a live stack, dbt included". Same 30
+files, 23 with new pixels. Consistent demo data throughout: fictional tenant "Acme
+Analytics", generic users `adminuser`/`root`/`probeuser`, demo workspaces
+(grantprobe, e2e-pw, qa-access, wsgrant), `product_sales` table,
+`daily_sales_rollup` trigger. Credentials masked (`****`); the trigger curl example
+uses `<CLIENT_ID>`/`<CLIENT_SECRET>` placeholders, no real secrets; service-principal
+"Secret fingerprint" values are `sha256(secret)[:12]`, non-reversible by design;
+`172.19.0.1` is RFC1918 docker-bridge space. Chameleon codename visible in the usual
+places — accepted per spec D3, do not re-flag.
+
+> **OPEN, non-blocking (raised for the owner):** `triggers-create.png` shows the
+> "Allowed client IDs" form placeholder `akamai-events-client, ingest-svc`, which
+> names a real third party. It is product-UI placeholder text (69 occurrences in the
+> source: the UI, unit tests, and an ingest "scoring stub"), not customer data, and
+> it appears in no synced text — only in these pixels. Confirm before it recurs
+> unexamined in a future refresh.
+
 **2026-08-16 — PASS (30/30 reviewed, direct image review, not a filename skim).**
 Two items surfaced and dispositioned below; everything else clean. See per-file
 table.

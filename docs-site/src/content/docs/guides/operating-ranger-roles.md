@@ -5,6 +5,17 @@ sidebar:
   order: 4
 ---
 
+## Before you start
+
+**You need** a checkout of the platform repository (the prune script ships in
+`quickstart/sqe/scripts/`), `ROOT_PASSWORD` and `RANGER_ADMIN_PASSWORD` — from the
+environment or from `quickstart/sqe/.env` — and the local Compose stack running:
+the script reaches Ranger through `docker exec` against the stack's own container,
+so it is written for a local stack rather than a remote deployment.
+
+**You end up with** empty orphaned roles deleted, and non-empty ones reported
+rather than removed.
+
 Deleting a workspace does not delete its Ranger roles. That is deliberate, and
 knowing why saves you from treating it as a leak.
 

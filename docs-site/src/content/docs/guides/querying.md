@@ -5,6 +5,18 @@ sidebar:
   order: 0
 ---
 
+## Before you start
+
+**You need** a signed-in session (`chameleon login`, or the portal) and a table you
+have been granted access to — a workspace's catalog with something in it. Access is
+per user, so "the table exists" and "you can read it" are different questions.
+
+**You end up with** the ability to run SQL from any of the three surfaces, and a
+clear idea of which identity each engine presents to the catalog — which is what
+determines whether a query is allowed.
+
+## Run a query
+
 You can run SQL from the CLI, the query editor in the web UI, or the REST API.
 The CLI is what the end-to-end tests use, so it is the path most exercised.
 
@@ -85,3 +97,12 @@ Three genuinely different causes produce nearly the same message:
 
 Distinguish 1 from 2 before assuming anything: if an admin can see the table and
 you cannot, it is a grant problem, not a missing object.
+
+## Related
+
+- [Engines](/docs/concepts/engines/) — which engine forwards your identity, and where the
+  decision is therefore made.
+- [Access control](/docs/concepts/access-control/) — why a table can be visible to one
+  person and not another.
+- [Run a query](/docs/guides/use-cases/run-query/) — the same task, in the portal, with
+  screenshots.

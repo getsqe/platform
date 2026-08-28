@@ -11,11 +11,33 @@ than an hour of confusion later.
 
 ## The shape
 
-```
-workspace  ── owns ──▶  catalog
-                          └── namespace
-                                └── table
-```
+<svg viewBox="0 0 660 250" role="img" aria-labelledby="shape-title shape-desc" style="max-width:100%;height:auto;margin:1.25rem 0">
+<title id="shape-title">What a workspace owns</title>
+<desc id="shape-desc">A workspace owns exactly one catalog, plus its storage buckets and its admin and member groups. Inside the catalog are namespaces, and inside those, Apache Iceberg tables. A table is named in full as catalog.namespace.table.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<g fill="none" stroke="currentColor" stroke-width="1.5" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13">
+<rect x="8" y="8" width="196" height="234" rx="8" stroke-opacity="0.45"/>
+<text x="24" y="34" fill="currentColor" stroke="none" font-weight="600">workspace</text>
+<text x="24" y="54" fill="currentColor" stroke="none" opacity="0.65" font-size="12">the unit a team is given</text>
+<rect x="24" y="72" width="164" height="34" rx="6" stroke-opacity="0.3"/>
+<text x="38" y="94" fill="currentColor" stroke="none" font-size="12">storage buckets</text>
+<rect x="24" y="118" width="164" height="34" rx="6" stroke-opacity="0.3"/>
+<text x="38" y="140" fill="currentColor" stroke="none" font-size="12">admins + members</text>
+<text x="24" y="196" fill="currentColor" stroke="none" font-size="12" opacity="0.65">owns exactly one</text>
+<path d="M150 208 h56" marker-end="url(#arrow)" stroke-opacity="0.8"/>
+<rect x="236" y="8" width="416" height="234" rx="8" stroke-opacity="0.45"/>
+<text x="256" y="34" fill="currentColor" stroke="none" font-weight="600">catalog</text>
+<text x="256" y="54" fill="currentColor" stroke="none" opacity="0.65" font-size="12">what an engine connects to</text>
+<rect x="256" y="72" width="378" height="156" rx="6" stroke-opacity="0.3"/>
+<text x="274" y="94" fill="currentColor" stroke="none" font-size="12">namespace</text>
+<text x="352" y="94" fill="currentColor" stroke="none" font-size="12" opacity="0.6">read it as a schema</text>
+<rect x="274" y="110" width="342" height="102" rx="6" stroke-opacity="0.3"/>
+<text x="292" y="132" fill="currentColor" stroke="none" font-size="12">table</text>
+<text x="336" y="132" fill="currentColor" stroke="none" font-size="12" opacity="0.6">an Apache Iceberg table</text>
+<text x="292" y="168" fill="currentColor" stroke="none" font-size="12" opacity="0.7">named in full as</text>
+<text x="292" y="190" fill="currentColor" stroke="none" font-size="12.5" font-family="ui-monospace, SFMono-Regular, monospace">catalog.namespace.table</text>
+</g>
+</svg>
 
 **Workspace** — the unit of tenancy, and the thing a team is given. It owns a
 catalog, its own storage buckets, and the groups whose members administer or use
